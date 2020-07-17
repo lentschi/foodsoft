@@ -6,6 +6,8 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/apparition'
+require 'factory_bot'
+require 'database_cleaner'
 
 Capybara.server = :puma, { Silent: true }
 Capybara.javascript_driver = :apparition
@@ -17,6 +19,7 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 RSpec.configure do |config|
   # We use capybara with webkit, and need database_cleaner
   config.before(:each) do
+    DatabaseCleaner.allow_remote_database_url = true
     DatabaseCleaner.strategy = (RSpec.current_example.metadata[:js] ? :truncation : :transaction)
     DatabaseCleaner.start
     # clean slate mail queues, not sure why needed - https://github.com/rspec/rspec-rails/issues/661
