@@ -48,6 +48,25 @@ services:
   redis:
     image: redis:6.2-alpine
 
+  app:
+    build:
+      context: .
+      dockerfile: docker-dev-config/app/Dockerfile
+      args:
+        config_path: ./docker-dev-config/app
+        user_id: ${USER_ID}
+        group_id: ${GROUP_ID}
+    volumes:
+      - ./ionic_client:/srv/project
+      - ./docker-dev-config/app:/srv/config
+      - ${TMP_X11}:/tmp/.X11-unix
+      - ${DEV_SHM}:/dev/shm
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY}
+    ports:
+      - 8100:8100
+
 volumes:
   bundle:
   mariadb:

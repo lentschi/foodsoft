@@ -68,9 +68,11 @@ module Foodsoft
       allow do
         origins '*'
         # this restricts Foodsoft scopes to certain characters - let's discuss it when it becomes an actual problem
-        resource %r{\A/[-a-zA-Z0-9_]+/api/v1/}, headers: :any, methods: :any
+        resource '*', headers: :any, methods: :any
       end
     end
+
+    config.web_console.whitelisted_ips = '192.168.80.1'
   end
 
   # Foodsoft version

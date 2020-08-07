@@ -1,0 +1,7 @@
+{
+  "name": "foodsoft_app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
