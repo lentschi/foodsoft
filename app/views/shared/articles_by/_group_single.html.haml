@@ -1,3 +1,4 @@
+- self_service = false unless defined?(self_service)
 %tbody{id: "group_order_#{group_order.id}"}
   - if not defined?(heading) or heading
     - unless self_service
