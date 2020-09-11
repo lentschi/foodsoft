@@ -55,6 +55,12 @@ class GroupOrder < ApplicationRecord
     data
   end
 
+  def received?
+    return false if order_articles.count.zero?
+
+    !order_articles.first.units_received.nil?
+  end
+
   def save_group_order_articles
     for order_article in order.order_articles
       # Find the group_order_article, create a new one if necessary...

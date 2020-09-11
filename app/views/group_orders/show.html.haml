@@ -4,7 +4,10 @@
       $('tr.ignored').hide();
     });
 
-- title t('.title', order: @order.name)
+- unless @group_order.received?
+  - title t('.title', order: @order.name)
+- else
+  - title "Abgeholte Mengen für Bestellung #{@order.name} korrigieren"
 
 .row-fluid
   .well.pull-left
@@ -40,63 +43,84 @@
 
 // Article box
 %section
-  %h2= t '.articles.title'
+  - unless @group_order.received?
+    %h2= t '.articles.title'
   .column_content#result
     - if @group_order
-      %p.pull-right= link_to t('.articles.show_hide'), '#', 'data-toggle-this' => 'tr.ignored'
-      %p= link_to(t('.articles.edit_order'), edit_group_order_path(@group_order, order_id: @order.id), class: 'btn btn-primary') if @order.open?
-      %table.table.table-hover
-        %thead
-          %tr
-            %th{style: "width:40%"}= heading_helper Article, :name
-            %th= heading_helper Article, :units
-            %th= t '.articles.unit_price'
-            %th
-              %abbr{title: t('.articles.ordered_title')}= t '.articles.ordered'
-            %th
-              %abbr{title: t('.articles.order_nopen_title')}
-                - if @order.open?
-                  = t '.articles.order_open'
-                - else
-                  = t '.articles.order_not_open'
-            %th= heading_helper GroupOrderArticle, :total_price
-        %tbody
-          - for category_name, order_articles in @order.articles_grouped_by_category
-            %tr.article-category
-              %td
-                = category_name
-                %i.icon-tag
-              %td{colspan: "9"}
-            - order_articles.each do |oa|
-              - # get the order-results for the ordergroup
-              - r = get_order_results(oa, @group_order.id)
-              %tr{class: cycle('even', 'odd', name: 'articles') + " " + order_article_class_name(r[:quantity], r[:tolerance], r[:result])}
-                %td{style: "width:40%"}
-                  = oa.article.name
-                  - unless oa.article.note.blank?
-                    = image_tag("lamp_grey.png", {alt: t('.articles.show_note'), size: "15x16", border: "0", onmouseover: "$('#note_#{oa.id}').show();", onmouseout: "$('#note_#{oa.id}').hide();"})
-                %td= "#{oa.price.unit_quantity} x #{oa.article.unit}"
-                %td= number_to_currency(oa.price.fc_price)
+      - unless @group_order.received?
+        %p.pull-right= link_to t('.articles.show_hide'), '#', 'data-toggle-this' => 'tr.ignored'
+        %p= link_to(t('.articles.edit_order'), edit_group_order_path(@group_order, order_id: @order.id), class: 'btn btn-primary') if @order.open?
+        %table.table.table-hover
+          %thead
+            %tr
+              %th{style: "width:40%"}= heading_helper Article, :name
+              %th= heading_helper Article, :units
+              %th= t '.articles.unit_price'
+              %th
+                %abbr{title: t('.articles.ordered_title')}= t '.articles.ordered'
+              %th
+                %abbr{title: t('.articles.order_nopen_title')}
+                  - if @order.open?
+                    = t '.articles.order_open'
+                  - else
+                    = t '.articles.order_not_open'
+              %th= heading_helper GroupOrderArticle, :total_price
+          %tbody
+            - for category_name, order_articles in @order.articles_grouped_by_category
+              %tr.article-category
                 %td
-                  = r[:quantity]
-                  = "+ #{r[:tolerance]}" if oa.price.unit_quantity > 1
-                %td= r[:result] > 0 ? r[:result] : "0"
-                %td= number_to_currency(r[:sub_total])
-              - unless oa.article.note.blank?
-                %tr{id: "note_#{oa.id}", class: "note even", style: "display:none"}
-                  %td{colspan: "6"}=h oa.article.note
-          %tr{class: cycle('even', 'odd', name: 'articles')}
-            %th{colspan: "5"}= heading_helper GroupOrder, :price
-            %th= number_to_currency(@group_order.price)
-          - if @group_order.transport
+                  = category_name
+                  %i.icon-tag
+                %td{colspan: "9"}
+              - order_articles.each do |oa|
+                - # get the order-results for the ordergroup
+                - r = get_order_results(oa, @group_order.id)
+                %tr{class: cycle('even', 'odd', name: 'articles') + " " + order_article_class_name(r[:quantity], r[:tolerance], r[:result])}
+                  %td{style: "width:40%"}
+                    = oa.article.name
+                    - unless oa.article.note.blank?
+                      = image_tag("lamp_grey.png", {alt: t('.articles.show_note'), size: "15x16", border: "0", onmouseover: "$('#note_#{oa.id}').show();", onmouseout: "$('#note_#{oa.id}').hide();"})
+                  %td= "#{oa.price.unit_quantity} x #{oa.article.unit}"
+                  %td= number_to_currency(oa.price.fc_price)
+                  %td
+                    = r[:quantity]
+                    = "+ #{r[:tolerance]}" if oa.price.unit_quantity > 1
+                  %td= r[:result] > 0 ? r[:result] : "0"
+                  %td= number_to_currency(r[:sub_total])
+                - unless oa.article.note.blank?
+                  %tr{id: "note_#{oa.id}", class: "note even", style: "display:none"}
+                    %td{colspan: "6"}=h oa.article.note
             %tr{class: cycle('even', 'odd', name: 'articles')}
-              %td{colspan: "5"}= heading_helper GroupOrder, :transport
-              %td= number_to_currency(@group_order.transport)
-            %tr{class: cycle('even', 'odd', name: 'articles')}
-              %th{colspan: "5"}= heading_helper GroupOrder, :total
-              %th= number_to_currency(@group_order.total)
-      %br/
-      = link_to_top
+              %th{colspan: "5"}= heading_helper GroupOrder, :price
+              %th= number_to_currency(@group_order.price)
+            - if @group_order.transport
+              %tr{class: cycle('even', 'odd', name: 'articles')}
+                %td{colspan: "5"}= heading_helper GroupOrder, :transport
+                %td= number_to_currency(@group_order.transport)
+              %tr{class: cycle('even', 'odd', name: 'articles')}
+                %th{colspan: "5"}= heading_helper GroupOrder, :total
+                %th= number_to_currency(@group_order.total)
+        %br/
+        = link_to_top
+      - else
+        = render 'shared/articles_by/common', order: @order
+        %table.table.table-condensed.table-hover.list#articles_by_groups
+          %thead.list-heading
+            %tr
+              %th{:style => "width:40%"}= heading_helper Article, :name
+              %th= heading_helper Article, :unit
+              %th.center
+                %acronym{:title => t('shared.articles.ordered_desc')}= t 'shared.articles.ordered'
+              %th.center
+                = 'Insgesamt zuwenig/zuviel geliefert'
+              %th.center
+                = 'Abgeholt'
+              %th.symbol
+              %th= heading_helper Article, :fc_price, short: true
+              %th.symbol
+              %th= t 'shared.articles_by.price'
+              %th= #heading_helper Article, :unit_quantity, short: true
+          = render 'shared/articles_by/group_single', group_order: @group_order, self_service: true
     - else
       - if @order.open?
         = t '.articles.not_ordered_msg'

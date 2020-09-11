@@ -197,6 +197,15 @@ class GroupOrderArticle < ApplicationRecord
     result != result_computed unless result.nil?
   end
 
+  def difference_received_ordered
+    order_article.units_received - order_article.units_to_order
+  end
+
+  def difference_received_ordered_formatted
+    diff = difference_received_ordered
+    "#{diff.negative? ? '' : '+'}#{diff}"
+  end
+
   private
 
   def check_order_not_closed

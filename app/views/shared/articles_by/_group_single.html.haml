@@ -1,12 +1,13 @@
 %tbody{id: "group_order_#{group_order.id}"}
   - if not defined?(heading) or heading
-    %tr.list-heading
-      %th{colspan: 9}
-        %h4.name= group_order.ordergroup_name
+    - unless self_service
+      %tr.list-heading
+        %th{colspan: 9}
+          %h4.name= group_order.ordergroup_name
   - total = 0
   - for goa in group_order.group_order_articles.ordered.includes(:order_article)
     - total += goa.total_price
-    = render 'shared/articles_by/group_single_goa', goa: goa
+    = render 'shared/articles_by/group_single_goa', goa: goa, self_service: self_service
   %tr{class: cycle('even', 'odd', :name => 'articles')}
     %th{colspan: 7}= heading_helper GroupOrder, :price
     %th.price_sum{colspan: 2, data: {value: total}}= number_to_currency(total)
