@@ -3,8 +3,10 @@
   %td= goa.order_article.article.unit
   %td.center= "#{goa.quantity} + #{goa.tolerance}"
   - if self_service
-    %td.center{:class => [goa.difference_received_ordered.negative? && 'unused', goa.difference_received_ordered.zero? && 'used'], :title => "Insgesamt bestellt: #{goa.order_article.units_to_order}, geliefert: #{goa.order_article.units_received}"}
-      = "#{goa.difference_received_ordered_formatted}"
+    %td.center
+      = "#{goa.order_article.units_received} (#{goa.difference_received_ordered_formatted})"
+    %td.center
+      = "#{goa.suggested_amount(@ordergroup)}"
   %td.center.input-delta= group_order_article_edit_result(goa)
   %td.symbol &times;
   %td= number_to_currency(goa.order_article.price.fc_price)

@@ -206,6 +206,20 @@ class GroupOrderArticle < ApplicationRecord
     "#{diff.negative? ? '' : '+'}#{diff}"
   end
 
+  def suggested_amount(ordergroup)
+    sum_of_all_differences = order_article.group_order_articles.reduce(0) do |sum, goa|
+      next sum if goa.group_order.ordergroup.id == ordergroup.id
+
+      sum + (goa.quantity - goa.result)
+    end
+
+    # "#{quantity} + #{difference_received_ordered} + #{sum_of_all_differences} = #{quantity + difference_received_ordered + sum_of_all_differences}"
+
+    safe = [quantity + difference_received_ordered + sum_of_all_differences, 0].max
+    estimate = [(quantity + ((difference_received_ordered + sum_of_all_differences) / order_article.group_order_articles.length)).round(2), 0].max
+    "sicher: #{safe} (geschätzt: #{estimate})"
+  end
+
   private
 
   def check_order_not_closed
