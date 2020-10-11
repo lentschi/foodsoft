@@ -125,6 +125,7 @@ class Finance::FinancialTransactionsController < ApplicationController
   protected
 
   def find_ordergroup
+    Rails.logger.info params.to_yaml.to_s
     if params[:ordergroup_id]
       @ordergroup = Ordergroup.include_transaction_class_sum.find(params[:ordergroup_id])
     else

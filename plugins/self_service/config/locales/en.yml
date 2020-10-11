@@ -1,0 +1,31 @@
+en:
+  navigation:
+    self_service: Self service
+  config:
+    hints:
+      use_self_service: Enable Self service page to allow users without extra permissions to edit their own pickups and transactions
+    keys:
+      use_self_service: Enable Self service page
+  self_service:
+    index:
+      title: Self service
+      availability: Availability
+      fetched: Picked up
+      pickup: Pickup
+      transactions: Transactions
+      date: Date
+      amount: Value
+      transaction_text: Transaction text
+  self_service_mailer:
+    order_received:
+      subject: 'Order received: %{name}'
+      text0: |
+        Dear %{ordergroup},
+
+        the order for "%{order}" has been received.
+      abundant_articles: Received too much
+      scarce_articles: Received too little
+      article_details: |
+        o %{name}:
+        -- Ordered: %{ordered} x %{unit}
+        -- Received: %{received} x %{unit}

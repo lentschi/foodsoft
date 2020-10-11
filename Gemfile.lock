@@ -51,6 +51,12 @@ PATH
       rails
 
 PATH
+  remote: plugins/self_service
+  specs:
+    foodsoft_self_service (0.1.0)
+      rails
+
+PATH
   remote: plugins/wiki
   specs:
     foodsoft_wiki (0.0.1)
@@ -583,6 +589,7 @@ DEPENDENCIES
   foodsoft_links!
   foodsoft_messages!
   foodsoft_polls!
+  foodsoft_self_service!
   foodsoft_wiki!
   gaffe
   haml
