@@ -28,3 +28,12 @@ de:
         o %{name}:
         -- Bestellt: %{ordered} x %{unit}
         -- Geliefert: %{received} x %{unit}
+  shared:
+    articles_by:
+      ordered_in_total: Gesamt bestellt
+      received_in_total: Gesamt geliefert
+      received_negative_diff: Zuwenig geliefert
+      received_positive_diff: Zuviel geliefert
+      fetched_negative_diff: Weniger abgeholt als bestellt
+      fetched_positive_diff: Mehr abgeholt als bestellt
+      corrections_details_header: Bisherige Korrekturen im Detail

@@ -29,3 +29,12 @@ en:
         o %{name}:
         -- Ordered: %{ordered} x %{unit}
         -- Received: %{received} x %{unit}
+  shared:
+    articles_by:
+      ordered_in_total: Ordered in total
+      received_in_total: Received in total
+      received_negative_diff: Received too little
+      received_positive_diff: Received too much
+      fetched_negative_diff: Picked up less than ordered
+      fetched_positive_diff: Picked up more than ordered
+      corrections_details_header: Detailed corrections so far
