@@ -221,6 +221,7 @@ en:
         role_finance: Finances
         role_invoices: Invoices
         role_orders: Order management
+        role_self_service: Self service
         role_pickups: Pickup days
         role_suppliers: Suppliers
         user_tokens: Members
@@ -623,6 +624,7 @@ en:
       default_role_finance: Finance
       default_role_invoices: Invoices
       default_role_orders: Orders
+      default_role_self_service: Self service
       default_role_pickups: Pickup days
       default_role_suppliers: Suppliers
       disable_invite: Disable invites
@@ -1005,6 +1007,16 @@ en:
     form:
       amount_change_for: Change amount for %{article}
       result_hint: 'Unit: %{unit}'
+  self_service:
+    index:
+      title: Self service
+      availability: Availability
+      fetched: Picked up
+      pickup: Pickup
+      transactions: Transactions
+      date: Date
+      amount: Value
+      transaction_text: Transaction text
   group_orders:
     archive:
       desc: View all %{link} here.
@@ -1086,6 +1098,7 @@ en:
       role_finance: Finance
       role_invoices: Invoices
       role_orders: Orders
+      role_self_service: Self service
       role_pickups: Pickup days
       role_suppliers: Suppliers
       show_google_maps: Show it on Google maps
@@ -1318,6 +1331,18 @@ en:
         Kind regards,
         %{user}
         %{foodcoop}
+    order_received:
+      subject: 'Order delivery registered: %{name}'
+      text0: |
+        Dear %{ordergroup},
+
+        the order for "%{order}" has been received.
+      abundant_articles: Received too much
+      scarce_articles: Received too little
+      article_details: |
+        o %{name}:
+        -- Ordered: %{ordered} x %{unit}
+        -- Received: %{received} x %{unit}
     reset_password:
       subject: New password for %{username}
       text: |
@@ -1412,6 +1437,7 @@ en:
       archive: My Orders
       manage: Manage orders
       ordering: Place order!
+      self_service: Self service
       pickups: Pickup days
       title: Orders
     tasks: Tasks
@@ -1577,6 +1603,13 @@ en:
     articles_by:
       price: Total price
       price_sum: Sum
+      ordered_in_total: Ordered in total
+      received_in_total: Received in total
+      received_negative_diff: Received too little
+      received_positive_diff: Received too much
+      fetched_negative_diff: Picked up less than ordered
+      fetched_positive_diff: Picked up more than ordered
+      corrections_details_header: Detailed corrections so far
     group:
       access: Access to
       activated: activated

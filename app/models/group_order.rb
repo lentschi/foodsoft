@@ -8,6 +8,7 @@ class GroupOrder < ApplicationRecord
   belongs_to :ordergroup, optional: true
   has_many :group_order_articles, :dependent => :destroy
   has_many :order_articles, :through => :group_order_articles
+  has_many :articles, through: :order_articles
   has_one :financial_transaction
   belongs_to :updated_by, optional: true, class_name: 'User', foreign_key: 'updated_by_user_id'
 
@@ -61,6 +62,12 @@ class GroupOrder < ApplicationRecord
     end
 
     data
+  end
+
+  def received?
+    return false if order_articles.count.zero?
+
+    !order_articles.first.units_received.nil?
   end
 
   def save_group_order_articles

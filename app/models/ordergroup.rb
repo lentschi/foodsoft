@@ -1,7 +1,7 @@
 # encoding: utf-8
 #
 # Ordergroups can order, they are "children" of the class Group
-# 
+#
 # Ordergroup have the following attributes, in addition to Group
 # * account_balance (decimal)
 class Ordergroup < Group
@@ -61,7 +61,7 @@ class Ordergroup < Group
   def value_of_open_orders(exclude = nil)
     group_orders.in_open_orders.reject{|go| go == exclude}.collect(&:price).sum
   end
-  
+
   def value_of_finished_orders(exclude = nil)
     group_orders.in_finished_orders.reject{|go| go == exclude}.collect(&:price).sum
   end
@@ -82,6 +82,7 @@ class Ordergroup < Group
   # Creates a new FinancialTransaction for this Ordergroup and updates the account_balance accordingly.
   # Throws an exception if it fails.
   def add_financial_transaction!(amount, note, user, transaction_type, link = nil, group_order = nil)
+    t = nil
     transaction do
       t = FinancialTransaction.new(ordergroup: self, amount: amount, note: note, user: user, financial_transaction_type: transaction_type, financial_link: link, group_order: group_order)
       t.save!
@@ -92,6 +93,8 @@ class Ordergroup < Group
       end
       t
     end
+
+    t
   end
 
   def update_stats!
@@ -116,7 +119,7 @@ class Ordergroup < Group
     stats[:jobs_size].to_f / stats[:orders_sum].to_f rescue 0
   end
 
-  # This is the ordergroup job per euro performance 
+  # This is the ordergroup job per euro performance
   # in comparison to the hole foodcoop average
   def apples
     ((avg_jobs_per_euro / Ordergroup.avg_jobs_per_euro) * 100).to_i rescue 0
@@ -144,7 +147,7 @@ class Ordergroup < Group
   def account_updated
     financial_transactions.last.try(:created_on) || created_on
   end
-  
+
   private
 
   # Make sure, that a user can only be in one ordergroup
@@ -163,6 +166,6 @@ class Ordergroup < Group
       errors.add :name, message
     end
   end
- 
+
 end
 

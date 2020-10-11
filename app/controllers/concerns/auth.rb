@@ -62,6 +62,7 @@ module Concerns::Auth
       when 'pickups'             then current_user.role_pickups?
       when 'suppliers'           then current_user.role_suppliers?
       when 'orders'              then current_user.role_orders?
+      when 'self_service'        then current_user.role_self_service?
       when 'finance_or_invoices' then (current_user.role_finance? || current_user.role_invoices?)
       when 'finance_or_orders'   then (current_user.role_finance? || current_user.role_orders?)
       when 'pickups_or_orders'   then (current_user.role_pickups? || current_user.role_orders?)
@@ -98,6 +99,10 @@ module Concerns::Auth
 
   def authenticate_orders
     authenticate('orders')
+  end
+
+  def authenticate_self_service
+    authenticate('self_service')
   end
 
   def authenticate_finance_or_invoices

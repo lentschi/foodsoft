@@ -1,7 +1,8 @@
 class GroupOrderArticlesController < ApplicationController
 
-  before_action :authenticate_finance
+  before_action :authenticate_finance, except: [:update]
   before_action :find_group_order_article, except: [:new, :create]
+  before_action :authenticate_finance_or_self_service_and_member, only: [:update]
 
   layout false  # We only use this controller to server js snippets, no need for layout rendering
 
@@ -13,6 +14,14 @@ class GroupOrderArticlesController < ApplicationController
   def create
     # XXX when ordergroup_id appears before order_article_id in the parameters, you
     #     can get `NoMethodError - undefined method 'order_id' for nil:NilClass`
+
+    unless params[:group_order_article][:article_id].nil?
+      go = GroupOrder.find_by_id(params[:group_order_article][:group_order_id])
+      oa = OrderArticle.where(article_id: params[:group_order_article][:article_id], order_id: go.order_id).first
+      params[:group_order_article][:order_article_id] = oa.id
+      params[:group_order_article].delete(:article_id)
+    end
+
     @group_order_article = GroupOrderArticle.new(params[:group_order_article])
     @order_article = @group_order_article.order_article
 
@@ -43,6 +52,7 @@ class GroupOrderArticlesController < ApplicationController
     end
 
     update_summaries(@group_order_article)
+    @ordergroup = current_user.ordergroup
 
     render :update
   end
@@ -71,5 +81,12 @@ class GroupOrderArticlesController < ApplicationController
 
   def find_group_order_article
     @group_order_article = GroupOrderArticle.find(params[:id])
+  end
+
+  def authenticate_finance_or_self_service_and_member
+    current_user.role_finance? || (
+      current_user.role_self_service? &&
+      @group_order_article.group_order.ordergroup.member?(current_user)
+    )
   end
 end
