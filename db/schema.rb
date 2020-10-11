@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_05_090257) do
+ActiveRecord::Schema.define(version: 2021_02_05_090258) do
 
   create_table "article_categories", force: :cascade do |t|
     t.string "name", default: "", null: false
@@ -181,6 +181,7 @@ ActiveRecord::Schema.define(version: 2021_02_05_090257) do
     t.date "break_end"
     t.boolean "role_invoices", default: false, null: false
     t.boolean "role_pickups", default: false, null: false
+    t.boolean "role_self_service", default: false, null: false
     t.index ["name"], name: "index_groups_on_name", unique: true
   end
 
