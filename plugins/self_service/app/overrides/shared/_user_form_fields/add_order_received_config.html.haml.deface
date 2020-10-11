@@ -1,0 +1,2 @@
+/ insert_after 'erb:contains("order_finished")'
+= notify.input 'order_received', as: :boolean, input_html: { checked: f.object.settings.notify['order_received'] }

@@ -16,6 +16,7 @@ en:
       date: Date
       amount: Value
       transaction_text: Transaction text
+    access_denied: Cannot access self service
   self_service_mailer:
     order_received:
       subject: 'Order received: %{name}'
@@ -38,3 +39,8 @@ en:
       fetched_negative_diff: Picked up less than ordered
       fetched_positive_diff: Picked up more than ordered
       corrections_details_header: Detailed corrections so far
+  simple_form:
+    labels:
+      settings:
+        notify:
+          order_received: Inform me about delivery details (After the order has been received)

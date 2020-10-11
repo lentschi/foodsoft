@@ -1,4 +1,5 @@
 class SelfServiceController < ApplicationController
+  before_action :ensure_enabled
   before_action :ensure_ordergroup_member
 
   def index
@@ -22,8 +23,10 @@ class SelfServiceController < ApplicationController
   # -> Maybe merge it:
   def ensure_ordergroup_member
     @ordergroup = @current_user.ordergroup
-    if @ordergroup.nil?
-      redirect_to root_url, :alert => I18n.t('group_orders.errors.no_member')
-    end
+    redirect_to root_url, :alert => I18n.t('group_orders.errors.no_member') if @ordergroup.nil?
+  end
+
+  def ensure_enabled
+    redirect_to root_url, alert: I18n.t('self_service.access_denied') unless FoodsoftSelfService.enabled?
   end
 end

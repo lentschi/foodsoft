@@ -16,6 +16,7 @@ de:
       date: Datum
       amount: Betrag
       transaction_text: Buchungstext
+    access_denied: Auf Selbstbedienung kann nicht zugegriffen werden
   self_service_mailer:
     order_received:
       subject: 'Bestellung entgegengenommen: %{name}'
@@ -37,3 +38,8 @@ de:
       fetched_negative_diff: Weniger abgeholt als bestellt
       fetched_positive_diff: Mehr abgeholt als bestellt
       corrections_details_header: Bisherige Korrekturen im Detail
+  simple_form:
+    labels:
+      settings:
+        notify:
+          order_received: Informiere mich über Lieferdetails (nachdem die Ware entgegengenommen wurde).
