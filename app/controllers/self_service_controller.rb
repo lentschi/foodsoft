@@ -8,11 +8,9 @@ class SelfServiceController < ApplicationController
     @group_orders = @ordergroup
                     .group_orders
                     .joins(:order)
-                    .where(orders: { state: 'finished' })
+                    .where(orders: { state: 'received' })
                     .order('orders.ends DESC')
-                    .select(&:received?)
-
-
+                    .page(params[:page]).per(10)
 
     @financial_transactions = @ordergroup
                               .financial_transactions.order('created_on DESC')

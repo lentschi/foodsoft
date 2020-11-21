@@ -144,6 +144,8 @@
           - new_article_data.each do |order_article|
             %option{id: "add_article_#{order_article.id}", value: order_article.article.id}
               = "#{order_article.article.name} (#{number_to_currency order_article.article.price}/#{order_article.article.unit}) - #{t('.availability')}: #{order_article.availability}"
+      %div.pull-right
+        = paginate @group_orders
     %div#transactions.tab-pane
       = simple_form_for @ordergroup.financial_transactions.build, :url => finance_group_transactions_path(@ordergroup), remote: true, html: { class: 'self-service-transaction' } do |form|
         = form.hidden_field :ordergroup_id
