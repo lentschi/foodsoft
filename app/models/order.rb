@@ -45,7 +45,6 @@ class Order < ApplicationRecord
   scope :open, -> { where(state: 'open').order('ends DESC') }
   scope :finished, -> { where(state: %w[finished received closed]).order('ends DESC') }
   scope :finished_not_closed, -> { where(state: %w[finished received]).order('ends DESC') }
-
   # Allow separate inputs for date and time
   #   with workaround for https://github.com/einzige/date_time_attribute/issues/14
   include DateTimeAttributeValidate
