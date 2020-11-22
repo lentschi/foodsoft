@@ -71,7 +71,12 @@
     });
 
     $(document).on('GroupOrderArticle#create', function(e) {
-      $('#group_order_' + e.group_order_id + " tr.order_sum_row").before(e.row_html);
+      const newRow = $('#new_goa_'+e.order_article_id);
+      if (newRow.length === 1) {
+        newRow.replaceWith(e.row_html);
+      } else {
+        $('#group_order_' + e.group_order_id + " tr.order_sum_row").before(e.row_html);
+      }
     });
 
     $(function() {
