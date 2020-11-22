@@ -1,4 +1,4 @@
-%tr{class: [cycle('even', 'odd', :name => 'articles'), if goa.result == 0 && !self_service then 'unavailable' end, if self_service && goa.order_article.availability > 0 then 'abundance' end, if self_service && goa.order_article.availability < 0 then 'shortage' end], id: "goa_#{goa.id}"}
+%tr{class: [cycle('even', 'odd', :name => 'articles'), if goa.result == 0 && !self_service then 'unavailable' end, if self_service && goa.order_article.availability > 0 then 'abundance' end, if self_service && goa.order_article.availability < 0 then 'shortage' end], id: goa.new_record? ? "new_goa_#{goa.order_article_id}" : "goa_#{goa.id}"}
   %td.name= goa.order_article.article.name
   %td= goa.order_article.article.unit
   %td.center= "#{goa.quantity} + #{goa.tolerance}"

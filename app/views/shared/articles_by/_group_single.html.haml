@@ -6,7 +6,10 @@
         %th{colspan: 9}
           %h4.name= group_order.ordergroup_name
   - total = 0
-  - for goa in group_order.group_order_articles.ordered.includes(:order_article)
+  - goas = group_order.group_order_articles.ordered.includes(:order_article)
+  - if self_service
+    - goas += unassociated_articles_in_abundance.map { |order_article| group_order.new_group_order_article(order_article) }
+  - for goa in goas
     - total += goa.total_price
     = render 'shared/articles_by/group_single_goa', goa: goa, self_service: self_service
   %tr.order_sum_row{class: cycle('even', 'odd', :name => 'articles')}
