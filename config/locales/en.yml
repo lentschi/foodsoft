@@ -1011,9 +1011,11 @@ en:
     index:
       title: Self service
       availability: Availability
+      transactions: Transactions
+    pickup:
       fetched: Picked up
       pickup: Pickup
-      transactions: Transactions
+    transactions:
       date: Date
       amount: Value
       transaction_text: Transaction text

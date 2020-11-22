@@ -1006,10 +1006,12 @@ de:
   self_service:
     index:
       title: Selbstbedienung
-      availability: Verfügbarkeit
-      fetched: Abgeholt
       pickup: Abholung
       transactions: Transaktionen
+    pickup:
+      availability: Verfügbarkeit
+      fetched: Abgeholt
+    transactions:
       date: Datum
       amount: Betrag
       transaction_text: Buchungstext
