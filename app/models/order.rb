@@ -69,10 +69,6 @@ class Order < ApplicationRecord
     stockit? ? I18n.t('orders.model.stock') : supplier.name
   end
 
-  # def received_articles
-  #   order_articles.where('units_received > 0').map(&:article)
-  # end
-
   def articles_for_ordering
     if stockit?
       # make sure to include those articles which are no longer available
