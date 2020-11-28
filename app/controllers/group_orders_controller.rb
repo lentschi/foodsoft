@@ -33,7 +33,7 @@ class GroupOrdersController < ApplicationController
   end
 
   def show
-    @order = @group_order.order
+    @order= @group_order.order
   end
 
   def edit
