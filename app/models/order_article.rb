@@ -199,7 +199,7 @@ class OrderArticle < ApplicationRecord
   end
 
   def difference_received_ordered
-    units_received - units_to_order
+    (units_received || 0) - units_to_order
   end
 
   def sum_of_all_fetch_deviations
