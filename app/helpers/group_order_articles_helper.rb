@@ -22,7 +22,7 @@ module GroupOrderArticlesHelper
   def can_be_edited_in_place?(goa)
     goa.group_order.order.finished? && (
       current_user.role_finance? ||
-      (current_user.role_self_service? && goa.group_order.ordergroup.member?(current_user))
+      (FoodsoftConfig[:use_self_service] && goa.group_order.ordergroup.member?(current_user))
     )
   end
 end

@@ -85,7 +85,7 @@ class GroupOrderArticlesController < ApplicationController
 
   def authenticate_finance_or_self_service_and_member
     current_user.role_finance? || (
-      current_user.role_self_service? &&
+      FoodsoftConfig[:use_self_service] &&
       @group_order_article.group_order.ordergroup.member?(current_user)
     )
   end

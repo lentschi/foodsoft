@@ -146,7 +146,7 @@ class Finance::FinancialTransactionsController < ApplicationController
 
   def authenticate_finance_or_self_service_and_own_ordergroup
     current_user.role_finance? || (
-      current_user.role_self_service? &&
+      FoodsoftConfig[:use_self_service] &&
       !@ordergroup.nil? &&
       @ordergroup.member?(current_user)
     )

@@ -189,11 +189,6 @@ class User < ApplicationRecord
     FoodsoftConfig[:default_role_pickups] || groups.detect {|group| group.role_pickups?}
   end
 
-  # Checks the invoices role
-  def role_self_service?
-    FoodsoftConfig[:default_self_service] || groups.detect {|group| group.role_self_service?}
-  end
-
   # Checks the orders role
   def role_orders?
     FoodsoftConfig[:default_role_orders] || groups.detect {|group| group.role_orders?}

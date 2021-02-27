@@ -221,7 +221,6 @@ en:
         role_finance: Finances
         role_invoices: Invoices
         role_orders: Order management
-        role_self_service: Self service
         role_pickups: Pickup days
         role_suppliers: Suppliers
         user_tokens: Members
@@ -624,7 +623,6 @@ en:
       default_role_finance: Finance
       default_role_invoices: Invoices
       default_role_orders: Orders
-      default_role_self_service: Self service
       default_role_pickups: Pickup days
       default_role_suppliers: Suppliers
       disable_invite: Disable invites
@@ -1100,7 +1098,6 @@ en:
       role_finance: Finance
       role_invoices: Invoices
       role_orders: Orders
-      role_self_service: Self service
       role_pickups: Pickup days
       role_suppliers: Suppliers
       show_google_maps: Show it on Google maps

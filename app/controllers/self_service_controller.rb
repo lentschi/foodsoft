@@ -2,7 +2,7 @@
 # logged in ordergroup without finance permissions
 class SelfServiceController < ApplicationController
   before_action :ensure_ordergroup_member
-  before_action :authenticate_self_service
+  before_action -> { require_config_enabled :use_self_service }
 
   def index
     @group_orders = @ordergroup
