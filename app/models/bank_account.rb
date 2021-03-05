@@ -1,5 +1,6 @@
 class BankAccount < ApplicationRecord
   has_many :bank_transactions, dependent: :destroy
+  has_many :supplier_categories, dependent: :nullify
 
   normalize_attributes :name, :iban, :description
 
