@@ -24,7 +24,11 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.httpClient.get('http://localhost:3000/f/api/v1/session').subscribe(r => {
+      this.httpClient.post('http://localhost:3000/ruebezahl17/oauth/authorize', {
+        client_id: 'DrZvUGAKFZxgCt42vUjLgZZ32mrfhDZvRE7YQW7VnlQ',
+        redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+        response_type: 'code'
+      }).subscribe(r => {
         console.log('Result', r);
       });
     });

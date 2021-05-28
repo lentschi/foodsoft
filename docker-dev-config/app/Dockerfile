@@ -17,11 +17,11 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 && apt-get install google-chrome-stable -y
 
 ARG group_id
-RUN groupadd -g ${group_id} web
+RUN groupadd -g 1000 web
 RUN groupadd libvirtd
 
 ARG user_id
-RUN useradd -g web -G kvm,libvirtd -m -u ${user_id} web
+RUN useradd -g web -G kvm,libvirtd -m -u 1000 web
 
 RUN echo "web ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 

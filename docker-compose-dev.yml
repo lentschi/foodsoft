@@ -35,6 +35,8 @@ services:
       - MYSQL_DATABASE=development
     volumes:
       - mariadb:/var/lib/mysql
+    ports:
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -54,14 +56,11 @@ services:
       dockerfile: docker-dev-config/app/Dockerfile
       args:
         config_path: ./docker-dev-config/app
-        user_id: ${USER_ID}
-        group_id: ${GROUP_ID}
     volumes:
       - ./ionic_client:/srv/project
       - ./docker-dev-config/app:/srv/config
       - ${TMP_X11}:/tmp/.X11-unix
       - ${DEV_SHM}:/dev/shm
-    privileged: true
     environment:
       - DISPLAY=${DISPLAY}
     ports:
