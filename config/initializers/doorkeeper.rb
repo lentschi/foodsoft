@@ -4,14 +4,23 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
+    Doorkeeper::ApplicationController.send :include, Concerns::Locale
+    Doorkeeper::ApplicationController.send :include, Concerns::FoodcoopScope
+    Doorkeeper::ApplicationController.send :include, Concerns::Auth
     authenticate
   end
 
   resource_owner_from_credentials do
+    Doorkeeper::ApplicationController.send :include, Concerns::Locale
+    Doorkeeper::ApplicationController.send :include, Concerns::FoodcoopScope
+    Doorkeeper::ApplicationController.send :include, Concerns::Auth
     User.authenticate(params[:username], params[:password])
   end
 
   admin_authenticator do
+    Doorkeeper::ApplicationController.send :include, Concerns::Locale
+    Doorkeeper::ApplicationController.send :include, Concerns::FoodcoopScope
+    Doorkeeper::ApplicationController.send :include, Concerns::Auth
     authenticate_admin
   end
 
