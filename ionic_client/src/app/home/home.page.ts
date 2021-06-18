@@ -19,14 +19,15 @@ export class HomePage {
       redirectUri: 'http://localhost:8100/home'
     });
 
-    let token = await auth.owner.getToken('Florian Lentsch', 'wrongpw');
+    let token = await auth.owner.getToken('Florian Lentsch', 'hasi!#//i');
+    localStorage.setItem('oAuthToken', token.accessToken);
 
     // const request = token.sign<any>({
     //   method: 'get',
     //   url: 'http://localhost:3000/ruebezahl17/admin/users'
     // });
 
-    const response = await this.httpClient.get(`http://localhost:3000/ruebezahl17/api/v1/config?access_token=${token.accessToken}`).toPromise();
+    const response = await this.httpClient.get(`http://localhost:3000/ruebezahl17/api/v1/config`).toPromise();
 
     console.log('resp', response);
   }

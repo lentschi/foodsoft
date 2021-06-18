@@ -39,3 +39,7 @@ Capfile
 config/deploy
 config/deploy.rb
 Gemfile.capistrano*
+
+.env
+.vscode
+.byebug_history
