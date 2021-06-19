@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { httpInterceptorProviders } from './http-interceptors';
 import { LoginFormComponent } from './auth/login-form/login-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, LoginFormComponent],
@@ -20,6 +21,7 @@ import { LoginFormComponent } from './auth/login-form/login-form.component';
     IonicModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
+    ReactiveFormsModule
   ],
   providers: [
     StatusBar,
