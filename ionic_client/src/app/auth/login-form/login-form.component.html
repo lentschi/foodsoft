@@ -7,5 +7,9 @@
     <ion-label>Password</ion-label>
     <ion-input type="password" formControlName="password"></ion-input>
   </ion-item>
-  <ion-button type="submit" [disabled]="!loginFormGroup?.valid">Login</ion-button>
+  <span class="error ion-padding" *ngIf="loginFormGroup.errors?.loginFailed">
+    <ion-icon name="warning-outline"></ion-icon>
+    Login failed
+  </span>
+  <ion-button expand="block" type="submit" [disabled]="!formValidExceptForLoginFailure">Login</ion-button>
 </form>

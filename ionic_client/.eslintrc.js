@@ -10,103 +10,18 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['@ionic', '@typescript-eslint', '@angular-eslint'],
+  plugins: ['@ionic', '@angular-eslint'],
   extends: ['plugin:@ionic/strict'],
   rules: {
-    'indent': ['warn', 2, {
-      'SwitchCase': 1
-    }],
-    'object-curly-spacing': ['warn', 'always'],
-    '@typescript-eslint/array-type': 'off',
-
-    'arrow-parens': 'off',
-
-    '@angular-eslint/component-class-suffix': 'warn',
-
-    '@angular-eslint/contextual-lifecycle': 'warn',
-
-    '@angular-eslint/directive-class-suffix': 'warn',
-
-    '@angular-eslint/directive-selector': [
-      'warn',
-      { type: 'attribute', prefix: 'app', style: 'camelCase' },
-    ],
-
-    '@angular-eslint/component-selector': [
-      'warn',
-      { type: 'element', prefix: 'app', style: 'kebab-case' },
-    ],
-
-    'no-restricted-imports': [
-      'warn',
+    'no-empty-function': [
+      'error',
       {
-        paths: [
-          {
-            name: 'rxjs/Rx',
-            message: "Please import directly from 'rxjs' instead",
-          },
-        ],
-      },
+        'allow': ['constructors']
+      }
     ],
-
-    '@typescript-eslint/interface-name-prefix': 'off',
-
-    'max-classes-per-file': 'off',
-
-    'max-len': ['warn', { code: 140 }],
-
-    '@typescript-eslint/explicit-member-accessibility': 'off',
-
-    '@typescript-eslint/member-ordering': [
-      'warn',
-      {
-        default: [
-          'static-field',
-          'instance-field',
-          'static-method',
-          'instance-method',
-        ],
-      },
-    ],
-
-    'no-multiple-empty-lines': 'off',
-
-    'no-restricted-syntax': [
-      'warn',
-      {
-        selector:
-          'CallExpression[callee.object.name="console"][callee.property.name=/^(debug|info|time|timeEnd|trace)$/]',
-        message: 'Unexpected property on console object was called',
-      },
-    ],
-
-    'no-empty': 'off',
-
-    '@typescript-eslint/no-inferrable-types': [
-      'warn',
-      {
-        ignoreParameters: true,
-      },
-    ],
-
-    '@typescript-eslint/no-non-null-assertion': 'warn',
-
-    'no-fallthrough': 'warn',
-
-    '@typescript-eslint/no-var-requires': 'off',
-
-    'quote-props': ['warn', 'as-needed'],
-
-    'sort-keys': 'off',
-
-    /**
-     * Needs import plugin
-     */
-
-    quotes: ['warn', 'single'],
-
-    'comma-dangle': 'off',
-
+    'sort-imports': 'off',
+    'line-comment-position': 'off',
+    'capitalized-comments': 'off',
     '@angular-eslint/no-conflicting-lifecycle': 'warn',
 
     '@angular-eslint/no-host-metadata-property': 'warn',
@@ -125,6 +40,6 @@ module.exports = {
 
     '@angular-eslint/use-lifecycle-interface': 'warn',
 
-    '@angular-eslint/use-pipe-transform-interface': 'warn',
+    '@angular-eslint/use-pipe-transform-interface': 'warn'
   }
 };

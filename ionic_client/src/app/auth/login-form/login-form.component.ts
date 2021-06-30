@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
 import * as ClientOAuth2 from 'client-oauth2';
 
 @Component({
-  selector: 'app-login-form',
+  selector: 'login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.scss'],
 })
-export class LoginFormComponent implements OnInit {
-
-  loginFormGroup = this.formBuilder.group({
-    userName: [''],
-    password: [""]
+export class LoginFormComponent {
+  public loginFormGroup = this.formBuilder.group({
+    userName: ['', Validators.required],
+    password: [''],
   });
 
   private readonly auth = new ClientOAuth2({
@@ -20,26 +19,37 @@ export class LoginFormComponent implements OnInit {
     clientSecret: 'eMIeiaeMNnwHnFIfsg0SA_sgeIpBzG6vqI7-qpZydg8',
     accessTokenUri: 'http://localhost:3000/ruebezahl17/oauth/token',
     authorizationUri: 'http://localhost:3000/ruebezahl17/oauth/authorize',
-    redirectUri: 'http://localhost:8100/home'
+    redirectUri: 'http://localhost:8100/home',
   });
 
-  constructor(private readonly formBuilder: FormBuilder, private readonly modalController: ModalController) {
-  }
+  public constructor(private readonly formBuilder: FormBuilder, private readonly modalController: ModalController) {}
 
-  ngOnInit() {
-  }
+  public async onSubmit(): Promise<void> {
+    this.loginFormGroup.disable();
 
-  async onSubmit(): Promise<void> {
     let accessToken: string;
     try {
       const token = await this.auth.owner.getToken(this.loginFormGroup.value.userName, this.loginFormGroup.value.password);
-      accessToken = token.accessToken;
-    } catch(e) {
-      console.log("TODO handle", e);
+      ({ accessToken } = token);
+    } catch (e) {
+      this.loginFormGroup.enable();
+      if (e.body?.error === 'invalid_grant') {
+        this.loginFormGroup.setErrors({ loginFailed: true });
+      }
       return;
     }
 
-    this.modalController.dismiss({accessToken})
+    this.modalController.dismiss({ accessToken });
   }
 
+  public get formValidExceptForLoginFailure(): boolean {
+    if (this.loginFormGroup.valid) {
+      return true;
+    }
+
+    const errorKeys = this.loginFormGroup.errors ? Object.keys(this.loginFormGroup.errors) : [];
+    const controls = Object.values(this.loginFormGroup.controls);
+    return !errorKeys.some(errorKey => errorKey !== 'loginFailed') &&
+      !controls.some(control => control.invalid);
+  }
 }
