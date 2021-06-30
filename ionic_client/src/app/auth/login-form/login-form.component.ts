@@ -12,7 +12,7 @@ export class LoginFormComponent implements OnInit {
 
   loginFormGroup = this.formBuilder.group({
     userName: [''],
-    password: ['']
+    password: [""]
   });
 
   private readonly auth = new ClientOAuth2({
@@ -35,7 +35,7 @@ export class LoginFormComponent implements OnInit {
       const token = await this.auth.owner.getToken(this.loginFormGroup.value.userName, this.loginFormGroup.value.password);
       accessToken = token.accessToken;
     } catch(e) {
-      console.log('TODO handle', e);
+      console.log("TODO handle", e);
       return;
     }
 
