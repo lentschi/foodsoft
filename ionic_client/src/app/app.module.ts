@@ -14,6 +14,7 @@ import { LoginFormComponent } from './auth/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IndexedMigrationsModule } from 'src/config/indexed-migrations/indexed-migrations.module';
 import { DbManager } from './services/db-manager';
+import { LoginService } from './services/login.service';
 
 @NgModule({
   declarations: [AppComponent, LoginFormComponent],
@@ -30,6 +31,7 @@ import { DbManager } from './services/db-manager';
     StatusBar,
     SplashScreen,
     DbManager,
+    LoginService,
     httpInterceptorProviders,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],

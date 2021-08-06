@@ -45,17 +45,17 @@ export function HasOne(typeName?: string) {
 }
 
 
-export function PersistenceModel(constructor: typeof AppModel) {
-  if (!constructor.tableName) {
-    throw new Error(`table name must be specified - constructor.name: ${constructor.name}`);
+export function PersistenceModel(tableName: string) {
+  return (constructor: typeof AppModel) => {
+    constructor.tableName = tableName;
+
+    if (!constructor.hasOneRelations) {
+      constructor.hasOneRelations = {};
+    }
+
+
+    AppModel.register(constructor.tableName, constructor);
   }
-
-  if (!constructor.hasOneRelations) {
-    constructor.hasOneRelations = {};
-  }
-
-
-  AppModel.register(constructor.tableName, constructor);
 }
 
 
@@ -63,9 +63,9 @@ export function PersistenceModel(constructor: typeof AppModel) {
  * ORM representation of a db table
  */
 export class AppModel {
-  static typeMap: {[propertyName: string]: string;} = {};
+  static typeMap: {[propertyName: string]: string;};
 
-  static hasOneRelations: {[propertyName: string]: string;} = {};
+  static hasOneRelations: {[propertyName: string]: string;};
 
   static modelRegistry: {[propertyName: string]: typeof AppModel;} = {};
 

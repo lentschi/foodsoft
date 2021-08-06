@@ -12,7 +12,7 @@
     <ion-label>Password</ion-label>
     <ion-input type="password" formControlName="password"></ion-input>
   </ion-item>
-  <div class="error ion-padding" *ngIf="loginFormGroup.errors?.loginFailed">
+  <div class="error ion-padding" *ngIf="loginFailed">
     <ion-icon name="warning-outline"></ion-icon>
     Login failed
   </div>

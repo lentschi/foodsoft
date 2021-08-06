@@ -11,7 +11,11 @@ export class QueryCollection<T extends AppModel> {
 
   private sortBy: {property: string; descending: boolean;};
 
-  constructor(private db: IDBDatabase, private modelClass: typeof AppModel) { }
+  constructor(private db: IDBDatabase, private modelClass: typeof AppModel) {
+    if (modelClass.tableName == null) {
+      throw new Error(`Missing @PersistenceModel class decorator for:\n${modelClass}\n`);
+    }
+  }
 
   order(property: string, descending = false): QueryCollection<T> {
     if (this.sortBy) {

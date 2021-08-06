@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { IndexedMigration } from 'src/config/indexed-migrations/indexed-migration';
+import { Setting } from '../models/setting';
 import { AppModel } from '../utils/orm';
 
 
@@ -11,6 +12,7 @@ export class DbManager {
 
   public async initialize(): Promise<void> {
     await this.migrateIndexedDb();
+    await Setting.addDefaultsForMissingKeys();
   }
 
   private get targetSchemaVersion(): number {
