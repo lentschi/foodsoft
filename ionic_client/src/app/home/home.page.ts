@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import * as ClientOAuth2 from 'client-oauth2';
+import { User } from '../models/user';
+import { DbManager } from '../services/db-manager';
 
 @Component({
   selector: 'app-home',
@@ -8,11 +9,18 @@ import * as ClientOAuth2 from 'client-oauth2';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  constructor(private httpClient: HttpClient) {}
+  public constructor(private httpClient: HttpClient, private readonly dbManager: DbManager) {}
 
-  async test() {
-    const response = await this.httpClient.get(`http://localhost:3000/ruebezahl17/api/v1/config`).toPromise();
+  public async test(): Promise<void> {
+    // const response = await this.httpClient.get('http://localhost:3000/ruebezahl17/api/v1/config').toPromise();
 
-    console.log('resp', response);
+    await this.dbManager.initialize();
+
+    // const user = new User();
+    // user.name = 'Flo';
+    // await user.save();
+    const collection = User.all();
+    const single = await collection.list();
+    console.log('resp', single);
   }
 }

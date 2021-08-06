@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { httpInterceptorProviders } from './http-interceptors';
 import { LoginFormComponent } from './auth/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { IndexedMigrationsModule } from 'src/config/indexed-migrations/indexed-migrations.module';
+import { DbManager } from './services/db-manager';
 
 @NgModule({
   declarations: [AppComponent, LoginFormComponent],
@@ -21,14 +23,16 @@ import { ReactiveFormsModule } from '@angular/forms';
     IonicModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    IndexedMigrationsModule,
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    DbManager,
     httpInterceptorProviders,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

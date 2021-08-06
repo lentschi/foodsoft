@@ -3,6 +3,7 @@ import { QueryCollection } from './query-collection';
 import 'reflect-metadata';
 import { v1 as uuid } from 'uuid';
 import { RecordNotFoundError } from './errors/record-not-found-error';
+import { QueryOperator } from './operator-enum';
 
 export function Column(colType?: string) {
   return function(object: any, propertyName: string) {
@@ -62,9 +63,9 @@ export function PersistenceModel(constructor: typeof AppModel) {
  * ORM representation of a db table
  */
 export class AppModel {
-  static typeMap: {[propertyName: string]: string;};
+  static typeMap: {[propertyName: string]: string;} = {};
 
-  static hasOneRelations: {[propertyName: string]: string;};
+  static hasOneRelations: {[propertyName: string]: string;} = {};
 
   static modelRegistry: {[propertyName: string]: typeof AppModel;} = {};
 
@@ -97,7 +98,7 @@ export class AppModel {
    * Retrieve query collection for the model
    * @return {QueryCollection} the model's query collection
    */
-  static all<T>(this: typeof AppModel): QueryCollection<T> {
+  static all<T extends AppModel>(this: (new () => T) & typeof AppModel): QueryCollection<T> {
     // TODO: check https://stackoverflow.com/questions/34098023/typescript-self-referencing-return-type-for-static-methods-in-inheriting-classe
     return new QueryCollection<T>(this.db, this);
   }
@@ -106,25 +107,24 @@ export class AppModel {
    * Find model instance by a specific property value
    * @param  {string}            propertyName the property's name
    * @param  {any}               value        the property's value
-   * @return {Promise<AppModel>}              an AppModel instance for the record retrieved from the db
+   * @return {Promise<extends AppModel>}      an AppModel instance for the record retrieved from the db
    */
-  static findBy(propertyName: string, value: any): Promise<AppModel> {
-    return this
-      .all()
-      .filter(propertyName, '=', value)
+  static findBy<T extends AppModel, K extends keyof T>(this: (new () => T) & typeof AppModel, propertyName: K, value: T[K]): Promise<T> {
+    return this.all<T>()
+      .filter(propertyName, QueryOperator.equal, value)
       .one();
   }
 
   /**
    * See [[AppModel.findBy]], but if no matching record can be found, one is created
    */
-  static findOrCreateBy(propertyName: string, value: any): Promise<AppModel> {
+  static findOrCreateBy<T extends AppModel, K extends keyof T>(this: (new () => T) & typeof AppModel, propertyName: K, value: T[K]): Promise<T> {
     return new Promise(async resolve => {
-      let modelInstance: AppModel;
+      let modelInstance: T;
       try {
-        modelInstance = await this.findBy(propertyName, value);
+        modelInstance = await this.findBy<T, K>(propertyName, value);
       } catch (e) {
-        modelInstance = new this();
+        modelInstance = <T> new this();
         modelInstance[propertyName] = value;
       }
 
@@ -132,11 +132,11 @@ export class AppModel {
     });
   }
 
-  static async createFromIndexedDbResult(data: unknown, relationsToLoad: string[]): Promise<AppModel> {
+  static async createFromIndexedDbResult<T extends AppModel>(this: typeof AppModel, data: T, relationsToLoad: string[]): Promise<T> {
     if (!data) {
       throw new Error('Cannot create instance with no data');
     }
-    const modelInstance: AppModel = new this();
+    const modelInstance = <T> new this();
     modelInstance.id = data.id;
     modelInstance.rawData = data;
     for (const propertyName of Object.keys(this.typeMap)) {
@@ -211,7 +211,7 @@ export class AppModel {
     const modelClass = <typeof AppModel> this.constructor;
     const affectedItems = await modelClass
       .all()
-      .filter('id', '=', this.id)
+      .filter('id', QueryOperator.equal, this.id)
       .delete();
 
     if (affectedItems !== 1) {

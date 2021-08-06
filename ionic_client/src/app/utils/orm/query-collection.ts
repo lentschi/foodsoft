@@ -1,20 +1,19 @@
+/* eslint-disable */
+import { IDBIterator } from './idb-iterator';
 import { AppModel } from './app-model';
 import { RecordNotFoundError } from './errors/record-not-found-error';
-import { IDBIterator } from '../idb-iterator';
+import { QueryOperator } from './operator-enum';
 
-export class QueryCollection<T> {
+export class QueryCollection<T extends AppModel> {
   private relationsToLoad: string[] = [];
 
-  private filters: {property: string; operator: string; value: any;}[] = [];
+  private filters: {property: keyof T; operator: QueryOperator; value: unknown;}[] = [];
 
   private sortBy: {property: string; descending: boolean;};
 
-  /**
-   * @param  {any} persistenceCollection the persistencejs-version of QueryCollection
-   */
   constructor(private db: IDBDatabase, private modelClass: typeof AppModel) { }
 
-  order(property: string, descending = false): QueryCollection {
+  order(property: string, descending = false): QueryCollection<T> {
     if (this.sortBy) {
       throw new Error('Cannot sort by multiple fields');
     }
@@ -24,7 +23,7 @@ export class QueryCollection<T> {
     return this;
   }
 
-  filter(property: string, operator: string, value: any): QueryCollection {
+  filter<PropertyKey extends keyof T>(property: PropertyKey, operator: QueryOperator, value: T[PropertyKey]): QueryCollection<T> {
     this.filters.push({ property, operator, value });
     return this;
   }
@@ -40,13 +39,13 @@ export class QueryCollection<T> {
     });
   }
 
-  private async getList(): Promise<Array<any>> {
-    const idFilter = this.filters.find(filter => filter.property === 'id' && filter.operator === '=');
+  private async getList(): Promise<Array<T>> {
+    const idFilter = this.filters.find(filter => filter.property === 'id' && filter.operator === QueryOperator.equal);
     if (idFilter) {
       if (this.filters.length > 1) {
         throw new Error('Searching for an ID and something else is currently not supported');
       }
-      const result = await this.getSingle(idFilter.value);
+      const result = await this.getSingle(idFilter.value.toString());
       return result ? [{ ...result, id: idFilter.value }] : [];
     }
 
@@ -58,7 +57,7 @@ export class QueryCollection<T> {
     let index: IDBIndex;
     let key: IDBKeyRange = null;
     const applicableFilters = this.filters
-      .filter(filter => filter.operator === '=' &&
+      .filter(filter => filter.operator === QueryOperator.equal &&
           typeof filter.value !== 'undefined' &&
           filter.value !== null &&
           (!this.sortBy || this.sortBy.property === filter.property));
@@ -112,15 +111,12 @@ export class QueryCollection<T> {
     return ret;
   }
 
-  private filtersMatch(filters: {property: string; operator: string; value: any;}[], item: any): boolean {
+  private filtersMatch(filters: {property: keyof T; operator: QueryOperator; value: any;}[], item: any): boolean {
     for (const filter of filters) {
-      if (!['=', '!=', '<>'].includes(filter.operator)) {
-        throw new Error('Operator not implemented');
-      }
 
       const convertedValue = this.modelClass.convertToIndexedDbValue(filter.value);
 
-      if ((filter.operator === '<>' || filter.operator === '!=') &&
+      if ((filter.operator === QueryOperator.notEqual) &&
           (
             item[filter.property] === convertedValue ||
             convertedValue === null && typeof item[filter.property] === 'undefined'
@@ -129,7 +125,7 @@ export class QueryCollection<T> {
         return false;
       }
 
-      if (filter.operator === '=' && (
+      if (filter.operator === QueryOperator.equal && (
         item[filter.property] !== convertedValue &&
           (convertedValue !== null || typeof item[filter.property] !== 'undefined')
       )) {
@@ -150,7 +146,7 @@ export class QueryCollection<T> {
     return ret;
   }
 
-  async one(): Promise<AppModel> {
+  async one(): Promise<T> {
     const list = await this.getList();
     if (list.length === 0) {
       console.log(`DB:${this.modelClass.tableName}:NOTFOUND`, this.filters);
@@ -163,7 +159,7 @@ export class QueryCollection<T> {
   async delete(): Promise<number> {
     const list = await this.getList();
     if (list.length > 0) {
-      await new Promise(async (resolve, reject) => {
+      await new Promise<void>(async (resolve, reject) => {
         const transaction = this.db
           .transaction([this.modelClass.tableName], 'readwrite');
 
@@ -213,7 +209,7 @@ export class QueryCollection<T> {
     return items.length;
   }
 
-  prefetch(propertyName: string): QueryCollection {
+  prefetch(propertyName: string): QueryCollection<T> {
     this.relationsToLoad.push(propertyName);
     return this;
   }
