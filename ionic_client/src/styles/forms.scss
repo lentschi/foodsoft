@@ -1,4 +1,7 @@
 .error {
   color: var(--error-color);
-  display: block;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
 }
