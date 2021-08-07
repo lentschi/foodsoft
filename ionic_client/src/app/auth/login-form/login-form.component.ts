@@ -58,7 +58,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.modalController.dismiss({ accessToken });
+    await this.modalController.dismiss({ accessToken });
   }
 
   public get formValidExceptForLoginFailure(): boolean {

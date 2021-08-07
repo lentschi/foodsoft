@@ -2,7 +2,7 @@ import { AppModel, Column, PersistenceModel } from '../utils/orm';
 
 @PersistenceModel('Setting')
 export class Setting extends AppModel {
-  private static settingsCache: { [settingKey: string]: string; } = {};
+  private static readonly settingsCache: { [settingKey: string]: unknown; } = {};
 
   private static settingConfig: { [settingKey in keyof AvailableSettings]: SettingConfiguration<AvailableSettings[settingKey]> } = {
     oAuthToken: {},
