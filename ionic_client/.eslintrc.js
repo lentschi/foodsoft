@@ -23,6 +23,8 @@ module.exports = {
     'sort-imports': 'off',
     'line-comment-position': 'off',
     'capitalized-comments': 'off',
+    'require-await': 'warn',
+    '@typescript-eslint/no-floating-promises': 'error',
     '@angular-eslint/no-conflicting-lifecycle': 'warn',
 
     '@angular-eslint/no-host-metadata-property': 'warn',
@@ -42,5 +44,13 @@ module.exports = {
     '@angular-eslint/use-lifecycle-interface': 'warn',
 
     '@angular-eslint/use-pipe-transform-interface': 'warn'
-  }
+  },
+  overrides: [
+    {
+      files: ['*.spec.ts'],
+      rules: {
+        'no-undef': 'off'
+      }
+    }
+  ]
 };

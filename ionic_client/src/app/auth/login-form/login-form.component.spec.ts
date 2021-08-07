@@ -8,9 +8,9 @@ describe('LoginFormComponent', () => {
   let fixture: ComponentFixture<LoginFormComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ LoginFormComponent ],
-      imports: [IonicModule.forRoot()]
+    void TestBed.configureTestingModule({
+      declarations: [LoginFormComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginFormComponent);
@@ -19,6 +19,6 @@ describe('LoginFormComponent', () => {
   }));
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    void expect(component).toBeTruthy();
   });
 });
