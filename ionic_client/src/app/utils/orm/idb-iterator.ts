@@ -39,7 +39,7 @@ export class IDBIterator implements AsyncIterableIterator<unknown> {
 
   public constructor(
     private objectStore: IDBObjectStore | IDBIndex,
-    private keyRange: IDBKeyRange = null,
+    private keyRange: IDBKeyRange| undefined = undefined,
     private direction: IDBCursorDirection = 'next'
   ) { }
 
@@ -49,7 +49,7 @@ export class IDBIterator implements AsyncIterableIterator<unknown> {
 
   public next(): Promise<IteratorResult<unknown>> {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise<IteratorResult<unknown>>(async resolve => {
+    return new Promise<IteratorResult<unknown>>(resolve => {
       // We need to store the resolver as an instance variable, since else the
       // success callback would always try to resolve the promise of the first
       // next() call only:

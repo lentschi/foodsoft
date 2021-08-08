@@ -24,24 +24,22 @@ export class DbManager {
    * Run indexedDb migrations
    * @returns version that we migrated from or null if no migration was required
    */
-  private async migrateIndexedDb(fromVersion?: number, toVersion = this.targetSchemaVersion): Promise<number | undefined> {
+  private async migrateIndexedDb(fromVersion?: number, toVersion = this.targetSchemaVersion): Promise<void> {
     let upgradeNeeded = false;
-    let db: IDBDatabase;
 
-    const upgradedFrom = await new Promise<number | undefined>((resolve, reject) => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open(DATABASE_NAME, toVersion);
       request.onerror = (error): void => reject(error);
       request.onupgradeneeded = (event: IDBVersionChangeEvent): void => {
         const startVersion = typeof fromVersion === 'undefined' ? event.oldVersion : fromVersion;
         upgradeNeeded = true;
-        db = request.result;
         let transaction: IDBTransaction;
         console.log(`DB: Migration from version ${startVersion} to ${toVersion} required`);
         for (const migration of this.indexedMigrations.slice(startVersion, toVersion)) {
           transaction = migration.migrate(<IDBOpenDBRequest> event.target);
         }
 
-        transaction!.oncomplete = (): void => resolve(startVersion);
+        transaction!.oncomplete = (): void => resolve(request.result);
         transaction!.onerror = (e): void => reject(e);
       };
 
@@ -49,15 +47,12 @@ export class DbManager {
       request.onsuccess = (): void => {
         if (!upgradeNeeded) {
           console.log('DB: No migration needed');
-          db = request.result;
-          resolve(undefined);
+          resolve(request.result);
         }
       };
     });
 
-    console.log('DB: Done migrating', upgradedFrom);
-    AppModel.db = db!;
-
-    return upgradedFrom;
+    console.log('DB: Done migrating');
+    AppModel.db = database;
   }
 }

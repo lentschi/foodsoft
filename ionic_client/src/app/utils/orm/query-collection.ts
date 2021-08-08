@@ -49,7 +49,7 @@ export class QueryCollection<T extends AppModel> {
       if (this.filters.length > 1) {
         throw new Error('Searching for an ID and something else is currently not supported');
       }
-      const result = await this.getSingle(idFilter.value.toString());
+      const result = await this.getSingle((<any>idFilter.value).toString());
       return result ? [{ ...result, id: idFilter.value }] : [];
     }
 
@@ -58,8 +58,8 @@ export class QueryCollection<T extends AppModel> {
     const store = transaction.objectStore(this.modelClass.tableName);
 
     // Filter:
-    let index: IDBIndex;
-    let key: IDBKeyRange = null;
+    let index: IDBIndex | undefined = undefined;
+    let key: IDBKeyRange | undefined = undefined;
     const applicableFilters = this.filters
       .filter(filter => filter.operator === QueryOperator.equal &&
           typeof filter.value !== 'undefined' &&
@@ -201,7 +201,7 @@ export class QueryCollection<T extends AppModel> {
         const store = transaction.objectStore(this.modelClass.tableName);
         for (const value of values) {
           const propertyType = this.modelClass.typeMap[value.propertyName];
-          item[value.propertyName] = this.modelClass.convertToIndexedDbValue(value.value, propertyType);
+          (<{[index: string]:any}>item)[value.propertyName] = this.modelClass.convertToIndexedDbValue(value.value, propertyType);
         }
         store.put(item, item.id);
       }

@@ -47,7 +47,7 @@ export class AuthInterceptor implements HttpInterceptor {
       const loginModal = await this.modalController.create({ component: LoginFormComponent, componentProps: { initialError: e } });
       await loginModal.present();
       const loginOverlayEventDetail = await loginModal.onDidDismiss<LoginData>();
-      return loginOverlayEventDetail.data.accessToken;
+      return loginOverlayEventDetail.data!.accessToken;
     }
   }
 }
