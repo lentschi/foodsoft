@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -15,6 +15,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IndexedMigrationsModule } from 'src/config/indexed-migrations/indexed-migrations.module';
 import { DbManager } from './services/db-manager';
 import { LoginService } from './services/login.service';
+
+
+const initializeAppFactory = (dbManager: DbManager) => (): Promise<void> => dbManager.initialize();
 
 @NgModule({
   declarations: [AppComponent, LoginFormComponent],
@@ -34,6 +37,12 @@ import { LoginService } from './services/login.service';
     LoginService,
     httpInterceptorProviders,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAppFactory,
+      multi: true,
+      deps: [DbManager],
+    },
   ],
   bootstrap: [AppComponent],
 })
