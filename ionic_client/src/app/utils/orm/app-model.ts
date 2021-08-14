@@ -40,7 +40,7 @@ export function HasOne(typeName?: string) {
     if (!modelClass.hasOneRelations) {
       modelClass.hasOneRelations = {};
     }
-    modelClass.hasOneRelations[propertyName] = typeName!;
+    modelClass.hasOneRelations[propertyName] = <string>typeName;
   };
 }
 
@@ -69,7 +69,7 @@ export class AppModel {
 
   static modelRegistry: {[propertyName: string]: typeof AppModel;} = {};
 
-  static db?: IDBDatabase;
+  static db: IDBDatabase;
 
   static indexedProperties: string[];
 
@@ -100,7 +100,7 @@ export class AppModel {
    */
   static all<T extends AppModel>(this: (new () => T) & typeof AppModel): QueryCollection<T> {
     // TODO: check https://stackoverflow.com/questions/34098023/typescript-self-referencing-return-type-for-static-methods-in-inheriting-classe
-    return new QueryCollection<T>(this.db!, this);
+    return new QueryCollection<T>(this.db, this);
   }
 
   /**
@@ -142,9 +142,9 @@ export class AppModel {
     for (const propertyName of Object.keys(this.typeMap)) {
       const propertyType = this.typeMap[propertyName];
       if (propertyType === 'BOOL') {
-        (<any>modelInstance)[propertyName] = (<any>data)[propertyName] === 1;
+        (<boolean> <unknown> modelInstance[<keyof T> propertyName]) = (<number> <unknown>data[<keyof T> propertyName]) === 1;
       } else {
-        (<any>modelInstance)[propertyName] = (<any>data)[propertyName];
+        modelInstance[<keyof T> propertyName] = data[<keyof T> propertyName];
       }
     }
 
@@ -155,7 +155,7 @@ export class AppModel {
 
       const relationName: string = this.hasOneRelations[propertyName];
       const relatedModelClass = AppModel.getModelClass(relationName);
-      (<any>modelInstance)[propertyName] = await relatedModelClass.findBy('id', (<any>modelInstance)[`${propertyName}Id`]);
+      (<AppModel> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass.findBy('id', modelInstance[<keyof T> `${propertyName}Id`]);
     }
 
     return modelInstance;
@@ -184,12 +184,12 @@ export class AppModel {
     return new Promise(async (resolve, reject) => {
       const data: unknown = {};
       for (const propertyName of Object.keys(modelClass.typeMap)) {
-        const propertyValue = (<any>this)[propertyName];
+        const propertyValue = this[<keyof this> propertyName];
         const propertyType = modelClass.typeMap[propertyName];
-        (<any>data)[propertyName] = modelClass.convertToIndexedDbValue(propertyValue, propertyType);
+        (<any> data)[propertyName] = modelClass.convertToIndexedDbValue(propertyValue, propertyType);
       }
 
-      const transaction = modelClass.db!
+      const transaction = modelClass.db
         .transaction([modelClass.tableName], 'readwrite');
       const store = transaction.objectStore(modelClass.tableName);
 
@@ -225,12 +225,12 @@ export class AppModel {
 
     // copy fields:
     for (const propertyName of Object.keys(modelClass.typeMap)) {
-      (<any>copy)[propertyName] = (<any>this)[propertyName];
+      copy[<keyof this> propertyName] = this[<keyof this> propertyName];
     }
 
     // copy relations:
     for (const propertyName of Object.keys(modelClass.hasOneRelations)) {
-      (<any>copy)[propertyName] = (<any>this)[propertyName];
+      copy[<keyof this> propertyName] = this[<keyof this> propertyName];
     }
 
     return copy;

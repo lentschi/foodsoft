@@ -39,7 +39,7 @@ export class IDBIterator implements AsyncIterableIterator<unknown> {
 
   public constructor(
     private objectStore: IDBObjectStore | IDBIndex,
-    private keyRange: IDBKeyRange| undefined = undefined,
+    private keyRange?: IDBKeyRange,
     private direction: IDBCursorDirection = 'next'
   ) { }
 
