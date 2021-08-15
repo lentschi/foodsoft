@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AppModel } from 'src/app/utils/orm';
+import { ColumnType } from 'src/app/utils/orm/app-model';
 import { ApiPaginationResult } from './interfaces/api-pagination-result';
+import { PaginationQuery } from './interfaces/pagination-query';
 
 export abstract class BaseApiService<ModelType extends AppModel> {
   protected readonly baseUrl = 'http://localhost:3000/ruebezahl17/api/v1';
@@ -9,12 +11,20 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   public constructor(protected modelType: (new () => ModelType) & typeof AppModel, protected readonly httpClient: HttpClient) {}
 
-  public async paginate(order?: {by: keyof ModelType; orderDirection?: 'asc' | 'desc';}): Promise<ApiPaginationResult<ModelType>> {
+  public async paginate(paginationQuery?: PaginationQuery<ModelType>): Promise<ApiPaginationResult<ModelType>> {
     let params: HttpParams = new HttpParams();
-    if (order) {
-      params = params.set('order', <string> order.by);
-      if (order.orderDirection) {
-        params = params.set('order_direction', order.orderDirection);
+    if (paginationQuery) {
+      if (paginationQuery.orderBy !== undefined) {
+        params = params.set('order', <string> paginationQuery.orderBy);
+      }
+      if (paginationQuery.orderDirection) {
+        params = params.set('order_direction', paginationQuery.orderDirection);
+      }
+      if (paginationQuery.page !== undefined) {
+        params = params.set('page', paginationQuery.page.toString());
+      }
+      if (paginationQuery.perPage !== undefined) {
+        params = params.set('per_page', paginationQuery.perPage.toString());
       }
     }
     const response = <PaginationServerResponse> await this.httpClient.get(this.modelUrl, { params }).toPromise();
@@ -38,9 +48,13 @@ export abstract class BaseApiService<ModelType extends AppModel> {
     for (const key of Object.keys(modelData)) {
       const value = modelData[<keyof ModelType> key];
       switch (this.modelType.typeMap[key]) {
-        case 'DATE': (<Date> <unknown> model[<keyof ModelType> key]) = new Date(<string> <unknown> value); break;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        default: (<any> model[<keyof ModelType> key]) = value; break;
+        case ColumnType.Date:
+          (<Date | undefined> <unknown> model[<keyof ModelType> key]) = value ? new Date(<string> <unknown> value) : undefined;
+          break;
+        default:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (<any> model[<keyof ModelType> key]) = value;
+          break;
       }
     }
     return model;

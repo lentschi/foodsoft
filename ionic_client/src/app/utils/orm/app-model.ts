@@ -13,7 +13,7 @@ export const enum ColumnType {
   Json
 }
 
-export function Column(colType?: string) {
+export function Column(colType?: ColumnType) {
   return function(object: any, propertyName: string) {
     if (!colType) {
       const meta = Reflect.getMetadata('design:type', object, propertyName);
@@ -21,11 +21,11 @@ export function Column(colType?: string) {
       // const meta = {name: 'STRING'};
       const typeName: string = meta.name.toLowerCase();
       switch (typeName) {
-        case 'number': colType = 'INT'; break;
-        case 'boolean': colType = 'BOOL'; break;
-        case 'string': colType = 'TEXT'; break;
-        case 'date': colType = 'DATE'; break;
-        case 'object': colType = 'JSON'; break;
+        case 'number': colType = ColumnType.Integer; break;
+        case 'boolean': colType = ColumnType.Boolean; break;
+        case 'string': colType = ColumnType.Text; break;
+        case 'date': colType = ColumnType.Date; break;
+        case 'object': colType = ColumnType.Json; break;
         default: throw new Error(`persistencejs Column: Could not map type ${typeName} of column ${object.constructor.tableName}.${propertyName}`);
       }
     }
@@ -71,7 +71,7 @@ export function PersistenceModel(tableName: string) {
  * ORM representation of a db table
  */
 export class AppModel {
-  static typeMap: {[propertyName: string]: string;};
+  static typeMap: {[propertyName: string]: ColumnType;};
 
   static hasOneRelations: {[propertyName: string]: string;};
 
@@ -149,7 +149,7 @@ export class AppModel {
     modelInstance.rawData = data;
     for (const propertyName of Object.keys(this.typeMap)) {
       const propertyType = this.typeMap[propertyName];
-      if (propertyType === 'BOOL') {
+      if (propertyType === ColumnType.Boolean) {
         (<boolean> <unknown> modelInstance[<keyof T> propertyName]) = (<number> <unknown>data[<keyof T> propertyName]) === 1;
       } else {
         modelInstance[<keyof T> propertyName] = data[<keyof T> propertyName];
@@ -169,8 +169,8 @@ export class AppModel {
     return modelInstance;
   }
 
-  static convertToIndexedDbValue(value: unknown, propertyType?: string): unknown {
-    if (typeof value === 'boolean' || propertyType === 'BOOL') {
+  static convertToIndexedDbValue(value: unknown, propertyType?: ColumnType): unknown {
+    if (typeof value === 'boolean' || propertyType === ColumnType.Boolean) {
       return value ? 1 : 0;
     }
 

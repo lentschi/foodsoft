@@ -1,7 +1,13 @@
 <ion-content>
-  <ion-virtual-scroll [items]="orders$ | async">
-    <ng-container *virtualItem="let item">
-      <app-order-list-item [order]="item"></app-order-list-item>
-    </ng-container>
-  </ion-virtual-scroll>
+  <ion-list>
+    <ion-virtual-scroll [items]="orders$ | async">
+      <ng-container *virtualItem="let item">
+        <app-order-list-item [order]="item"></app-order-list-item>
+      </ng-container>
+    </ion-virtual-scroll>
+  </ion-list>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData()">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
