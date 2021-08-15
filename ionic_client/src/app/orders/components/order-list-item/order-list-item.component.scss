@@ -1,0 +1,18 @@
+.content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.avatar {
+  // padding: 10px;
+}
+
+.name {
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

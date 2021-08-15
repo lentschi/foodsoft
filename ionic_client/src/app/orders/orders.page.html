@@ -1,1 +1,7 @@
-<ion-button (click)="test()">Test</ion-button>
+<ion-content>
+  <ion-virtual-scroll [items]="orders$ | async">
+    <ng-container *virtualItem="let item">
+      <app-order-list-item [order]="item"></app-order-list-item>
+    </ng-container>
+  </ion-virtual-scroll>
+</ion-content>

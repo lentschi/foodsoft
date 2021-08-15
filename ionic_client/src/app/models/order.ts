@@ -12,5 +12,8 @@ export class Order extends AppModel {
   public ends: Date;
 
   @Column()
+  public pickup: Date;
+
+  @Column()
   public isOpen: boolean;
 }

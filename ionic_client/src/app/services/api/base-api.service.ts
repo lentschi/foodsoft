@@ -7,7 +7,7 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   protected readonly abstract modelName: string;
 
-  public constructor(protected modelType: new () => ModelType, protected readonly httpClient: HttpClient) {}
+  public constructor(protected modelType: (new () => ModelType) & typeof AppModel, protected readonly httpClient: HttpClient) {}
 
   public async paginate(order?: {by: keyof ModelType; orderDirection?: 'asc' | 'desc';}): Promise<ApiPaginationResult<ModelType>> {
     let params: HttpParams = new HttpParams();
@@ -35,7 +35,14 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   protected unmarshal(modelData: Partial<ModelType>): ModelType {
     const model = new this.modelType();
-    Object.assign(model, modelData);
+    for (const key of Object.keys(modelData)) {
+      const value = modelData[<keyof ModelType> key];
+      switch (this.modelType.typeMap[key]) {
+        case 'DATE': (<Date> <unknown> model[<keyof ModelType> key]) = new Date(<string> <unknown> value); break;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        default: (<any> model[<keyof ModelType> key]) = value; break;
+      }
+    }
     return model;
   }
 }

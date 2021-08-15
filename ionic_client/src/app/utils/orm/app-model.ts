@@ -5,6 +5,14 @@ import { v1 as uuid } from 'uuid';
 import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
+export const enum ColumnType {
+  Integer,
+  Boolean,
+  Text,
+  Date,
+  Json
+}
+
 export function Column(colType?: string) {
   return function(object: any, propertyName: string) {
     if (!colType) {

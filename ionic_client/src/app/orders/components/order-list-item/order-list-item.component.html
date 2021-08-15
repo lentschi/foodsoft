@@ -1,0 +1,10 @@
+<ion-item>
+  <ion-avatar slot="start" class="avatar">
+    <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+  </ion-avatar>
+  <div class="content">
+    <ion-label class="name">{{order.name}}</ion-label>
+    <app-date-display [date]="order.ends" class="ends-at"></app-date-display>
+    <app-date-display [date]="order.pickup" class="pickup-at"></app-date-display>
+  </div>
+</ion-item>
