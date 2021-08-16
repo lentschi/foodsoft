@@ -1,18 +1,19 @@
 import { Injectable, Inject } from '@angular/core';
 import { IndexedMigration } from 'src/config/indexed-migrations/indexed-migration';
-import { Setting } from '../models/setting';
+import { Setting } from '../models/orm/setting';
 import { AppModel } from '../utils/orm';
+import { SettingsService } from './settings.service';
 
 
 const DATABASE_NAME = 'FoodsoftClient';
 
 @Injectable()
 export class DbManager {
-  public constructor(@Inject(IndexedMigration) private indexedMigrations: IndexedMigration[]) { }
+  public constructor(@Inject(IndexedMigration) private indexedMigrations: IndexedMigration[], private readonly settingsService: SettingsService) { }
 
   public async initialize(): Promise<void> {
     await this.migrateIndexedDb();
-    await Setting.addDefaultsForMissingKeys();
+    await Setting.addDefaultsForMissingKeys(this.settingsService.settingsConfiguration);
   }
 
   private get targetSchemaVersion(): number {

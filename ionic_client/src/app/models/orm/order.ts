@@ -1,4 +1,4 @@
-import { PersistenceModel, AppModel, Column } from '../utils/orm';
+import { PersistenceModel, AppModel, Column } from '../../utils/orm';
 
 @PersistenceModel('Order')
 export class Order extends AppModel {

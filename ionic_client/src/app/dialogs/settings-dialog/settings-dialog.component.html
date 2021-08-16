@@ -9,5 +9,9 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  Hello
+  <ion-list lines="full" class="ion-no-margin settings">
+    <ng-container *ngFor="let setting of settings">
+      <ng-container *ngComponentOutlet="setting.inlineComponent; injector:setting.valueInjector"></ng-container>
+    </ng-container>
+  </ion-list>
 </ion-content>

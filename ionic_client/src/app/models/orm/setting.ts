@@ -1,14 +1,10 @@
-import { AppModel, Column, PersistenceModel } from '../utils/orm';
+import { AppModel, Column, PersistenceModel } from '../../utils/orm';
+import { AvailableSettings } from '../interfaces/available-settings';
+import { SettingConfiguration } from '../interfaces/setting-configuration';
 
 @PersistenceModel('Setting')
 export class Setting extends AppModel {
   private static readonly settingsCache: { [settingKey: string]: unknown; } = {};
-
-  private static settingConfig: { [settingKey in keyof AvailableSettings]: SettingConfiguration<AvailableSettings[settingKey]> } = {
-    oAuthToken: {},
-    userName: {},
-    password: {},
-  }
 
   @Column()
   public key: string;
@@ -20,11 +16,11 @@ export class Setting extends AppModel {
    * Insert default values for all missing setting keys
    * @param  {Function} callback Optional callback function
    */
-  public static async addDefaultsForMissingKeys(): Promise<void> {
+  public static async addDefaultsForMissingKeys(settingsConfiguration: { [settingKey in keyof AvailableSettings]: SettingConfiguration<AvailableSettings[settingKey]> }): Promise<void> {
     const settings = <Array<Setting>> await Setting.all().list();
 
-    for (const settingKey of <Array<keyof AvailableSettings>> Object.keys(this.settingConfig)) {
-      const settingConfig = this.settingConfig[settingKey];
+    for (const settingKey of <Array<keyof AvailableSettings>> Object.keys(settingsConfiguration)) {
+      const settingConfig = settingsConfiguration[settingKey];
 
       let setting = settings.find(curSetting => curSetting.key === settingKey);
       if (setting) {
@@ -86,14 +82,4 @@ export class Setting extends AppModel {
     this.value = value;
     return this.save();
   }
-}
-
-export interface AvailableSettings {
-  oAuthToken: string;
-  userName: string;
-  password: string;
-}
-
-export interface SettingConfiguration<T = unknown> {
-  default?: T;
 }

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { from, Observable } from 'rxjs';
 import { LoginFormComponent } from '../dialogs/login-form/login-form.component';
-import { Setting } from '../models/setting';
+import { Setting } from '../models/orm/setting';
 import { LoginService } from '../services/login.service';
 
 @Injectable()

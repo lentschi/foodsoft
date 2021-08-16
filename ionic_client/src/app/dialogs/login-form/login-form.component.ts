@@ -1,10 +1,10 @@
 import { ModalController } from '@ionic/angular';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Setting } from 'src/app/models/setting';
 import { LoginService, PermissionDenied } from 'src/app/services/login.service';
 import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+import { Setting } from 'src/app/models/orm/setting';
 
 @Component({
   selector: 'app-login-form',

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as ClientOAuth2 from 'client-oauth2';
-import { Setting } from '../models/setting';
+import { Setting } from '../models/orm/setting';
 
 @Injectable()
 export class LoginService {

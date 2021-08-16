@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Order } from 'src/app/models/order';
+import { Order } from 'src/app/models/orm/order';
 import { BaseApiService } from './base-api.service';
 
 @Injectable()

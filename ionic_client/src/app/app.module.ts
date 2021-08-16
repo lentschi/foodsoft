@@ -18,6 +18,8 @@ import { LoginService } from './services/login.service';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { SettingsDialogComponent } from './dialogs/settings-dialog/settings-dialog.component';
+import { SettingBooleanComponent } from './dialogs/settings-dialog/inline-components/boolean/setting-boolean.component';
+import { SettingsService } from './services/settings.service';
 
 
 const initializeAppFactory = (dbManager: DbManager) => (): Promise<void> => dbManager.initialize();
@@ -25,8 +27,8 @@ const initializeAppFactory = (dbManager: DbManager) => (): Promise<void> => dbMa
 const createTranslateLoader = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, '../assets/i18n/', '.json');
 
 @NgModule({
-  declarations: [AppComponent, LoginFormComponent, SettingsDialogComponent],
-  entryComponents: [],
+  declarations: [AppComponent, LoginFormComponent, SettingsDialogComponent, SettingBooleanComponent],
+  entryComponents: [SettingBooleanComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -47,6 +49,7 @@ const createTranslateLoader = (http: HttpClient): TranslateHttpLoader => new Tra
     SplashScreen,
     DbManager,
     LoginService,
+    SettingsService,
     httpInterceptorProviders,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {

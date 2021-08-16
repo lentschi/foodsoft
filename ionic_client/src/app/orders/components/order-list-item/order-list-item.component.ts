@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { Order } from 'src/app/models/order';
+import { Order } from 'src/app/models/orm/order';
 
 @Component({
   selector: 'app-order-list-item',
