@@ -1,5 +1,6 @@
-import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy,  Component, OnInit, ViewChild } from '@angular/core';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 import { Order } from '../models/order';
 import { OrdersApiService } from '../services/api/orders-api.service';
 
@@ -18,32 +19,23 @@ export class OrdersPage implements OnInit, AfterViewChecked {
 
   @ViewChild(IonContent) public content: IonContent;
 
-  public orders: Order[] = [];
+  public readonly orders$ = new BehaviorSubject<Order[]>([]);
 
-  private currentLowerPage = 0;
+  private currentLowerPage = 1;
 
-  private currentUpperPage = 0;
+  private currentUpperPage = 1;
 
   private totalPages?: number;
 
-  public constructor(private ordersApiService: OrdersApiService, private cd: ChangeDetectorRef) {}
+  public constructor(private ordersApiService: OrdersApiService) {}
 
   public async ngOnInit(): Promise<void> {
     this.currentLowerPage =  await this.ordersApiService.getTodaysPage();
     this.currentUpperPage = this.currentLowerPage;
-    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentLowerPage });
-    this.totalPages = ordersResult.totalPages;
+    await this.fetchOrders('new', false);
 
-    // const user = new User();
-    // user.name = 'Flo';
-    // await user.save();
-    // const collection = User.all();
-    // const single = await collection.list();
-    // const single = await User.all().filter('id', QueryOperator.equal, 'e014e950-f69c-11eb-9768-39e4ab00da53')
-    //   .one();
-    console.log('resp', ordersResult);
-    this.orders = ordersResult.results;
-    this.cd.markForCheck();
+    // Load one additional older page to ensure infinite scrollers work properly:
+    await this.loadOlder();
   }
 
   public async ngAfterViewChecked(): Promise<void> {
@@ -55,26 +47,18 @@ export class OrdersPage implements OnInit, AfterViewChecked {
 
   public async loadNewer(): Promise<void> {
     this.currentUpperPage += 1;
-    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentUpperPage });
-    this.orders.push(...ordersResult.results);
-
-    // this.orders$.next(orders);
+    await this.fetchOrders('new');
 
     await this.newerOrdersScroller?.complete();
-    this.cd.markForCheck();
 
     // this.virtualScroll.checkEnd();
   }
 
   public async loadOlder(): Promise<void> {
     this.currentLowerPage -= 1;
-    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentLowerPage });
-    this.orders.unshift(...ordersResult.results);
-
-    // this.orders$.next(orders);
+    await this.fetchOrders('old');
 
     await this.olderOrdersScroller?.complete();
-    this.cd.markForCheck();
 
     // this.virtualScroll.checkRange(0, 20);
 
@@ -84,10 +68,25 @@ export class OrdersPage implements OnInit, AfterViewChecked {
   }
 
   public get olderScrollerDisabled(): boolean {
-    return this.currentLowerPage === 0;
+    return this.currentLowerPage <= 1;
   }
 
   public get newerScrollerDisabled(): boolean {
-    return this.currentUpperPage === this.totalPages;
+    return this.totalPages === undefined || this.currentUpperPage >= this.totalPages;
+  }
+
+  private async fetchOrders(direction: 'old' | 'new', propagateChange = true): Promise<void> {
+    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: direction === 'old' ? this.currentLowerPage : this.currentUpperPage });
+    this.totalPages = ordersResult.totalPages;
+    const orders = this.orders$.value;
+    if (direction === 'old') {
+      orders.unshift(...ordersResult.results);
+    } else {
+      orders.push(...ordersResult.results);
+    }
+
+    if (propagateChange) {
+      this.orders$.next(orders);
+    }
   }
 }

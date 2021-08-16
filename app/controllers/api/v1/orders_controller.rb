@@ -10,7 +10,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
   def today_page
     order_hash = Hash.new
     order_hash[params.require(:order)] = params.require(:order_direction)
-    render json: (scope.order(order_hash).where('ends < ?', Time.now).count / params.require(:per_page).to_i).floor
+    render json: (scope.order(order_hash).where('ends < ? OR ends IS NULL', Time.now).count / params.require(:per_page).to_f).ceil
   end
 
   def show

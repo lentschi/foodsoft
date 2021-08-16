@@ -1,8 +1,7 @@
 <ion-content>
   <ion-infinite-scroll #olderOrdersScroller
-                       *ngIf="orders.length > 0"
+                       *ngIf="(orders$ | async)!.length > 0"
                        [disabled]="olderScrollerDisabled"
-                       threshold="0px"
                        (ionInfinite)="loadOlder()"
                        position="top">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading old data...">
@@ -15,13 +14,12 @@
         <app-order-list-item [order]="item"></app-order-list-item>
       </ng-container>
     </ion-virtual-scroll> -->
-    <app-order-list-item *ngFor="let item of orders" [order]="item"></app-order-list-item>
+    <app-order-list-item *ngFor="let item of (orders$ | async)" [order]="item"></app-order-list-item>
   </ion-list>
 
   <ion-infinite-scroll #newerOrdersScroller
-                       *ngIf="orders.length > 0"
+                       *ngIf="(orders$ | async)!.length > 0"
                        [disabled]="newerScrollerDisabled"
-                       threshold="0px"
                        (ionInfinite)="loadNewer()"
                        position="bottom">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading new data...">
