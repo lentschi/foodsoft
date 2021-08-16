@@ -4,12 +4,17 @@ import { Setting } from '../models/setting';
 
 @Injectable()
 export class LoginService {
+  private readonly baseUrl = window.location.href.split('/').slice(0, 3)
+    .join('/')
+    .replace('4200', '3000');
+
   private readonly auth = new ClientOAuth2({
     clientId: 'RhGguyvsjQOADrGiAix9Ds6uh2vjsHfUJFzWExuEw_Y',
     clientSecret: 'eMIeiaeMNnwHnFIfsg0SA_sgeIpBzG6vqI7-qpZydg8',
-    accessTokenUri: 'http://localhost:3000/ruebezahl17/oauth/token',
-    authorizationUri: 'http://localhost:3000/ruebezahl17/oauth/authorize',
-    redirectUri: 'http://localhost:8100/home',
+    accessTokenUri: `${this.baseUrl}/ruebezahl17/oauth/token`,
+    authorizationUri: `${this.baseUrl}/ruebezahl17/oauth/authorize`,
+    redirectUri: `${window.location.href.split('/').slice(0, 3)
+      .join('/')}/home`,
   });
 
   public async autoLogin(): Promise<string> {

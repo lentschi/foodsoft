@@ -5,7 +5,9 @@ import { ApiPaginationResult } from './interfaces/api-pagination-result';
 import { PaginationQuery, paginationQueryToHttpParams } from './interfaces/pagination-query';
 
 export abstract class BaseApiService<ModelType extends AppModel> {
-  protected readonly baseUrl = 'http://localhost:3000/ruebezahl17/api/v1';
+  protected readonly baseUrl = `${window.location.href.split('/').slice(0, 3)
+    .join('/')
+    .replace('4200', '3000')}/ruebezahl17/api/v1`;
 
   protected readonly abstract modelName: string;
 

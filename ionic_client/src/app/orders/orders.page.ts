@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectionStrategy,  Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy,  Component, OnInit, ViewChild } from '@angular/core';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Order } from '../models/order';
@@ -10,7 +10,7 @@ import { OrdersApiService } from '../services/api/orders-api.service';
   styleUrls: ['orders.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrdersPage implements OnInit, AfterViewChecked {
+export class OrdersPage implements OnInit {
   @ViewChild('olderOrdersScroller', { static: false }) public olderOrdersScroller?: IonInfiniteScroll;
 
   @ViewChild('newerOrdersScroller', { static: false }) public newerOrdersScroller?: IonInfiniteScroll;
@@ -36,12 +36,6 @@ export class OrdersPage implements OnInit, AfterViewChecked {
     await this.loadOlder();
   }
 
-  public async ngAfterViewChecked(): Promise<void> {
-    // if (this.scrollToBottomAfterViewChecked) {
-
-    //   this.scrollToBottomAfterViewChecked = false;
-    // }
-  }
 
   public async loadNewer(): Promise<void> {
     this.currentUpperPage += 1;
@@ -55,11 +49,6 @@ export class OrdersPage implements OnInit, AfterViewChecked {
     await this.fetchOrders('old');
 
     await this.olderOrdersScroller?.complete();
-
-
-    setTimeout(() => {
-      void this.content.scrollToPoint(undefined, 200);
-    }, 200);
   }
 
   public get olderScrollerDisabled(): boolean {
