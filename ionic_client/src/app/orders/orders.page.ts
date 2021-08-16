@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { IonInfiniteScroll, IonVirtualScroll } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
+import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { Order } from '../models/order';
 import { OrdersApiService } from '../services/api/orders-api.service';
 
@@ -10,19 +9,30 @@ import { OrdersApiService } from '../services/api/orders-api.service';
   styleUrls: ['orders.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrdersPage implements OnInit {
-  @ViewChild(IonVirtualScroll) public virtualScroll: IonVirtualScroll;
+export class OrdersPage implements OnInit, AfterViewChecked {
+  // @ViewChild(IonVirtualScroll) public virtualScroll: IonVirtualScroll;
 
-  @ViewChild(IonInfiniteScroll) public infiniteScroll: IonInfiniteScroll;
+  @ViewChild('olderOrdersScroller', { static: false }) public olderOrdersScroller?: IonInfiniteScroll;
 
-  public orders$ = new BehaviorSubject<Order[]>([]);
+  @ViewChild('newerOrdersScroller', { static: false }) public newerOrdersScroller?: IonInfiniteScroll;
 
-  private curPage = 0;
+  @ViewChild(IonContent) public content: IonContent;
 
-  public constructor(private ordersApiService: OrdersApiService) {}
+  public orders: Order[] = [];
+
+  private currentLowerPage = 0;
+
+  private currentUpperPage = 0;
+
+  private totalPages?: number;
+
+  public constructor(private ordersApiService: OrdersApiService, private cd: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void> {
-    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'desc' });
+    this.currentLowerPage =  await this.ordersApiService.getTodaysPage();
+    this.currentUpperPage = this.currentLowerPage;
+    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentLowerPage });
+    this.totalPages = ordersResult.totalPages;
 
     // const user = new User();
     // user.name = 'Flo';
@@ -32,22 +42,52 @@ export class OrdersPage implements OnInit {
     // const single = await User.all().filter('id', QueryOperator.equal, 'e014e950-f69c-11eb-9768-39e4ab00da53')
     //   .one();
     console.log('resp', ordersResult);
-    this.orders$.next(ordersResult.results);
+    this.orders = ordersResult.results;
+    this.cd.markForCheck();
   }
 
-  public async loadData(): Promise<void> {
-    this.curPage += 1;
-    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'desc', page: this.curPage });
-    const orders = this.orders$.value;
-    orders.push(...ordersResult.results);
-    this.orders$.next(orders);
+  public async ngAfterViewChecked(): Promise<void> {
+    // if (this.scrollToBottomAfterViewChecked) {
 
-    await this.infiniteScroll.complete();
+    //   this.scrollToBottomAfterViewChecked = false;
+    // }
+  }
 
-    if (this.curPage === ordersResult.totalPages) {
-      this.infiniteScroll.disabled = true;
-    }
+  public async loadNewer(): Promise<void> {
+    this.currentUpperPage += 1;
+    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentUpperPage });
+    this.orders.push(...ordersResult.results);
 
-    this.virtualScroll.checkEnd();
+    // this.orders$.next(orders);
+
+    await this.newerOrdersScroller?.complete();
+    this.cd.markForCheck();
+
+    // this.virtualScroll.checkEnd();
+  }
+
+  public async loadOlder(): Promise<void> {
+    this.currentLowerPage -= 1;
+    const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: this.currentLowerPage });
+    this.orders.unshift(...ordersResult.results);
+
+    // this.orders$.next(orders);
+
+    await this.olderOrdersScroller?.complete();
+    this.cd.markForCheck();
+
+    // this.virtualScroll.checkRange(0, 20);
+
+    // setTimeout(() => {
+    //   void this.content.scrollToPoint(undefined, 200);
+    // }, 100);
+  }
+
+  public get olderScrollerDisabled(): boolean {
+    return this.currentLowerPage === 0;
+  }
+
+  public get newerScrollerDisabled(): boolean {
+    return this.currentUpperPage === this.totalPages;
   }
 }

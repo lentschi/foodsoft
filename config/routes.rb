@@ -270,7 +270,10 @@ Rails.application.routes.draw do
         resources :financial_transaction_classes, only: [:index, :show]
         resources :financial_transaction_types, only: [:index, :show]
         resources :financial_transactions, only: [:index, :show]
+
         resources :orders, only: [:index, :show]
+        get :orders_today_page, controller: :orders, action: :today_page
+
         resources :order_articles, only: [:index, :show]
         resources :group_order_articles
         resources :article_categories, only: [:index, :show]
