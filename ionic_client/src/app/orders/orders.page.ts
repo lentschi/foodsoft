@@ -19,18 +19,23 @@ export class OrdersPage implements OnInit {
 
   public readonly orders$ = new BehaviorSubject<Order[]>([]);
 
-  private currentLowerPage = 1;
+  private currentLowerPage?: number;
 
-  private currentUpperPage = 1;
+  private currentUpperPage?: number;
 
   private totalPages?: number;
 
   public constructor(private ordersApiService: OrdersApiService) {}
 
   public async ngOnInit(): Promise<void> {
-    this.currentLowerPage =  await this.ordersApiService.getTodaysPage();
+    try {
+      this.currentLowerPage =  await this.ordersApiService.getTodaysPage();
+    } catch (e) {
+      this.orders$.next(await Order.all().list());
+      return;
+    }
     this.currentUpperPage = this.currentLowerPage;
-    await this.fetchOrders('new', false);
+    await this.fetchOrders('new', false, true);
 
     // Load one additional older page to ensure infinite scrollers work properly:
     await this.loadOlder();
@@ -38,29 +43,33 @@ export class OrdersPage implements OnInit {
 
 
   public async loadNewer(): Promise<void> {
-    this.currentUpperPage += 1;
+    this.currentUpperPage! += 1;
     await this.fetchOrders('new');
 
     await this.newerOrdersScroller?.complete();
   }
 
   public async loadOlder(): Promise<void> {
-    this.currentLowerPage -= 1;
+    this.currentLowerPage! -= 1;
     await this.fetchOrders('old');
 
     await this.olderOrdersScroller?.complete();
   }
 
   public get olderScrollerDisabled(): boolean {
-    return this.currentLowerPage <= 1;
+    return this.currentLowerPage === undefined || this.currentLowerPage <= 1;
   }
 
   public get newerScrollerDisabled(): boolean {
-    return this.totalPages === undefined || this.currentUpperPage >= this.totalPages;
+    return this.totalPages === undefined || this.currentUpperPage === undefined || this.currentUpperPage >= this.totalPages;
   }
 
-  private async fetchOrders(direction: 'old' | 'new', propagateChange = true): Promise<void> {
+  private async fetchOrders(direction: 'old' | 'new', triggerListRefresh = true, clearDb = false): Promise<void> {
     const ordersResult = await this.ordersApiService.paginate({ orderBy: 'ends', orderDirection: 'asc', page: direction === 'old' ? this.currentLowerPage : this.currentUpperPage });
+    if (clearDb) {
+      await Order.all().delete();
+    }
+    await this.cacheOrdersInDb(ordersResult.results);
     this.totalPages = ordersResult.totalPages;
     const orders = this.orders$.value;
     if (direction === 'old') {
@@ -69,8 +78,14 @@ export class OrdersPage implements OnInit {
       orders.push(...ordersResult.results);
     }
 
-    if (propagateChange) {
+    if (triggerListRefresh) {
       this.orders$.next(orders);
+    }
+  }
+
+  private async cacheOrdersInDb(orders: Order[]): Promise<void> {
+    for (const order of orders) {
+      await order.save();
     }
   }
 }

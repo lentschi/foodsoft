@@ -1,14 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Order } from 'src/app/models/orm/order';
+import { SettingsService } from '../settings.service';
 import { BaseApiService } from './base-api.service';
 
 @Injectable()
 export class OrdersApiService extends BaseApiService<Order> {
   protected readonly modelName = 'orders';
 
-  public constructor(httpClient: HttpClient) {
-    super(Order, httpClient);
+  public constructor(httpClient: HttpClient, settingsService: SettingsService) {
+    super(Order, httpClient, settingsService);
   }
 
   public async getTodaysPage(): Promise<number> {

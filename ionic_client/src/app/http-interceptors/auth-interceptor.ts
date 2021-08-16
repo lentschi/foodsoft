@@ -5,13 +5,18 @@ import { from, Observable } from 'rxjs';
 import { LoginFormComponent } from '../dialogs/login-form/login-form.component';
 import { Setting } from '../models/orm/setting';
 import { LoginService } from '../services/login.service';
+import { SettingsService } from '../services/settings.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  public constructor(private readonly modalController: ModalController, private readonly loginService: LoginService) { }
+  public constructor(private readonly modalController: ModalController, private readonly loginService: LoginService, private readonly settingsService: SettingsService) { }
 
   public intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // TODO make this responsive - see: https://gist.github.com/Gribanov/c6cce5a563ca0ba55591f15a96312db5
+    if (!req.url.startsWith(this.settingsService.getBaseUrl())) {
+      return next.handle(req);
+    }
+
+    // TODO make this reactive - see: https://gist.github.com/Gribanov/c6cce5a563ca0ba55591f15a96312db5
     return from(this.callAndAuthIfRequired(req, next));
   }
 
@@ -47,7 +52,10 @@ export class AuthInterceptor implements HttpInterceptor {
       const loginModal = await this.modalController.create({ component: LoginFormComponent, componentProps: { initialError: e } });
       await loginModal.present();
       const loginOverlayEventDetail = await loginModal.onDidDismiss<LoginData>();
-      return loginOverlayEventDetail.data!.accessToken;
+      if (!loginOverlayEventDetail.data) {
+        throw e;
+      }
+      return loginOverlayEventDetail.data.accessToken;
     }
   }
 }

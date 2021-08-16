@@ -18,4 +18,10 @@ export class SettingsService {
   };
 
   public constructor(private readonly translationService: TranslateService) {}
+
+  public getBaseUrl(): string {
+    return window.location.href.split('/').slice(0, 3)
+      .join('/')
+      .replace('4200', '3000');
+  }
 }

@@ -204,7 +204,7 @@ export class AppModel {
       const idBefore = this.id;
       this.id = this.id || uuid();
       console.log(`DB:${modelClass.tableName}:PUT`, idBefore, this.id, data);
-      store.put(data, this.id);
+      store.put(data, typeof idBefore === 'number' ? `${modelClass.tableName}-${this.id}` : this.id);
 
       transaction.oncomplete = (): void => resolve();
       transaction.onerror = (e):void => reject(e);

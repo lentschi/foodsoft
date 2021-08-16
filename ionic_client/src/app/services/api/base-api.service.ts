@@ -1,17 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { AppModel } from 'src/app/utils/orm';
 import { ColumnType } from 'src/app/utils/orm/app-model';
+import { SettingsService } from '../settings.service';
 import { ApiPaginationResult } from './interfaces/api-pagination-result';
 import { PaginationQuery, paginationQueryToHttpParams } from './interfaces/pagination-query';
 
 export abstract class BaseApiService<ModelType extends AppModel> {
-  protected readonly baseUrl = `${window.location.href.split('/').slice(0, 3)
-    .join('/')
-    .replace('4200', '3000')}/ruebezahl17/api/v1`;
+  protected readonly baseUrl = `${this.settingsService.getBaseUrl()}/ruebezahl17/api/v1`;
 
   protected readonly abstract modelName: string;
 
-  public constructor(protected modelType: (new () => ModelType) & typeof AppModel, protected readonly httpClient: HttpClient) {}
+  public constructor(protected modelType: (new () => ModelType) & typeof AppModel, protected readonly httpClient: HttpClient, protected readonly settingsService: SettingsService) {}
 
   public async paginate(paginationQuery?: PaginationQuery<ModelType>): Promise<ApiPaginationResult<ModelType>> {
     const params = paginationQueryToHttpParams(paginationQuery);
@@ -33,12 +32,9 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   protected unmarshal(modelData: Partial<ModelType>): ModelType {
     const model = new this.modelType();
+    // eslint-disable-next-line prefer-destructuring
     for (const key of Object.keys(modelData)) {
       const value = modelData[<keyof ModelType> key];
-      if (key === 'id') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-extra-parens
-        (<any> model).serverId = modelData[<keyof ModelType> key];
-      }
       switch (this.modelType.typeMap[key]) {
         case ColumnType.Date:
           (<Date | undefined> <unknown> model[<keyof ModelType> key]) = value ? new Date(<string> <unknown> value) : undefined;

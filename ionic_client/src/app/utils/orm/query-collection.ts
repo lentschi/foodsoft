@@ -81,7 +81,7 @@ export class QueryCollection<T extends AppModel> {
 
       const onlyValue: any = applicableFilters.length === 1
         ? this.modelClass.convertToIndexedDbValue(applicableFilters[0].value)
-        : applicableFilters.map(filter => this.modelClass.convertToIndexedDbValue(filter.value));
+        : applicableFilters.map(filter => this.modelClass.convertToIndexedDbValue( filter.value));
       try {
         key = IDBKeyRange.only(onlyValue);
       } catch (e) {
@@ -118,7 +118,7 @@ export class QueryCollection<T extends AppModel> {
   private filtersMatch(filters: {property: keyof T; operator: QueryOperator; value: any;}[], item: any): boolean {
     for (const filter of filters) {
 
-      const convertedValue = this.modelClass.convertToIndexedDbValue(filter.value);
+      const convertedValue = this.modelClass.convertToIndexedDbValue(<string> filter.property, filter.value);
 
       if ((filter.operator === QueryOperator.notEqual) &&
           (
@@ -140,9 +140,9 @@ export class QueryCollection<T extends AppModel> {
     return true;
   }
 
-  async list(): Promise<Array<AppModel>> {
+  async list(): Promise<Array<T>> {
     const list = await this.getList();
-    const ret: Array<AppModel> = [];
+    const ret: Array<T> = [];
     for (const item of list) {
       ret.push(await this.modelClass.createFromIndexedDbResult(item, this.relationsToLoad));
     }

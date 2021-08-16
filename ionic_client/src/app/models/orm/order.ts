@@ -16,7 +16,4 @@ export class Order extends AppModel {
 
   @Column()
   public isOpen: boolean;
-
-  @Column()
-  public serverId: number;
 }
