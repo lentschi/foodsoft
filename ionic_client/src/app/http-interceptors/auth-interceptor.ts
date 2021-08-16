@@ -2,7 +2,7 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { from, Observable } from 'rxjs';
-import { LoginFormComponent } from '../auth/login-form/login-form.component';
+import { LoginFormComponent } from '../dialogs/login-form/login-form.component';
 import { Setting } from '../models/setting';
 import { LoginService } from '../services/login.service';
 

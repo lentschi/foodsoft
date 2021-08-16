@@ -4,12 +4,12 @@ import { OrdersPageModule } from './orders/orders.page.module';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'orders',
     loadChildren: (): Promise<typeof OrdersPageModule> => import('./orders/orders.page.module').then(m => m.OrdersPageModule),
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'orders',
     pathMatch: 'full',
   },
 ];
