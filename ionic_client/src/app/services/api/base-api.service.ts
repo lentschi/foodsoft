@@ -36,7 +36,7 @@ export abstract class BaseApiService<ModelType extends AppModel> {
     for (const key of Object.keys(modelData)) {
       const value = modelData[<keyof ModelType> key];
       switch (this.modelType.typeMap[key]) {
-        case ColumnType.Date:
+        case ColumnType.date:
           (<Date | undefined> <unknown> model[<keyof ModelType> key]) = value ? new Date(<string> <unknown> value) : undefined;
           break;
         default:

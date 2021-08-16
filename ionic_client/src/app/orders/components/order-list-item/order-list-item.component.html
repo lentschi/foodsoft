@@ -4,7 +4,8 @@
   </ion-avatar>
   <div class="content">
     <ion-label class="name">{{order.name}}</ion-label>
-    <app-date-display [date]="order.ends" class="ends-at"></app-date-display>
-    <app-date-display [date]="order.pickup" class="pickup-at"></app-date-display>
+    <ion-icon class="state" [name]="stateIcon"></ion-icon>
+    <app-date-display [date]="order.ends" [active]="inTheFuture(order.ends)" class="ends-at"></app-date-display>
+    <app-date-display [date]="order.pickup" [active]="inTheFuture(order.pickup)" class="pickup-at"></app-date-display>
   </div>
 </ion-item>

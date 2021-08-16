@@ -1,9 +1,5 @@
 class OrderSerializer < ActiveModel::Serializer
-  attributes :id, :name, :starts, :ends, :boxfill, :pickup, :is_open, :is_boxfill
-
-  def is_open
-    object.open?
-  end
+  attributes :id, :name, :starts, :ends, :boxfill, :pickup, :state, :is_boxfill
 
   def is_boxfill
     object.boxfill?

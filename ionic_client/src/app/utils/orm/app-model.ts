@@ -6,11 +6,11 @@ import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
 export const enum ColumnType {
-  Integer,
-  Boolean,
-  Text,
-  Date,
-  Json
+  integer,
+  boolean,
+  text,
+  date,
+  json
 }
 
 export function Column(colType?: ColumnType) {
@@ -21,11 +21,11 @@ export function Column(colType?: ColumnType) {
       // const meta = {name: 'STRING'};
       const typeName: string = meta.name.toLowerCase();
       switch (typeName) {
-        case 'number': colType = ColumnType.Integer; break;
-        case 'boolean': colType = ColumnType.Boolean; break;
-        case 'string': colType = ColumnType.Text; break;
-        case 'date': colType = ColumnType.Date; break;
-        case 'object': colType = ColumnType.Json; break;
+        case 'number': colType = ColumnType.integer; break;
+        case 'boolean': colType = ColumnType.boolean; break;
+        case 'string': colType = ColumnType.text; break;
+        case 'date': colType = ColumnType.date; break;
+        case 'object': colType = ColumnType.json; break;
         default: throw new Error(`persistencejs Column: Could not map type ${typeName} of column ${object.constructor.tableName}.${propertyName}`);
       }
     }
@@ -149,7 +149,7 @@ export class AppModel {
     modelInstance.rawData = data;
     for (const propertyName of Object.keys(this.typeMap)) {
       const propertyType = this.typeMap[propertyName];
-      if (propertyType === ColumnType.Boolean) {
+      if (propertyType === ColumnType.boolean) {
         (<boolean> <unknown> modelInstance[<keyof T> propertyName]) = (<number> <unknown>data[<keyof T> propertyName]) === 1;
       } else {
         modelInstance[<keyof T> propertyName] = data[<keyof T> propertyName];
@@ -170,7 +170,7 @@ export class AppModel {
   }
 
   static convertToIndexedDbValue(value: unknown, propertyType?: ColumnType): unknown {
-    if (typeof value === 'boolean' || propertyType === ColumnType.Boolean) {
+    if (typeof value === 'boolean' || propertyType === ColumnType.boolean) {
       return value ? 1 : 0;
     }
 

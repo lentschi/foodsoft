@@ -36,8 +36,8 @@ module Concerns::CollectionScope
     s
   end
 
-  def render_collection(scope)
-    render json: scope, meta: collection_meta(scope)
+  def render_collection(scope_to_render)
+    render json: scope_to_render, meta: collection_meta(scope_to_render)
   end
 
   def collection_meta(scope, extra = {})

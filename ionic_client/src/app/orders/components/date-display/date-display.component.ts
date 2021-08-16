@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, HostBinding } from '@angular/core';
 import format from 'date-fns/format';
 import { de } from 'date-fns/locale';
 
@@ -9,7 +9,12 @@ import { de } from 'date-fns/locale';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateDisplayComponent {
-  @Input() public date?: Date;
+  @Input()
+  public date?: Date;
+
+  @HostBinding('class.active')
+  @Input()
+  public active: boolean;
 
   public get day(): string | undefined {
     if (!isValidDate(this.date)) {
