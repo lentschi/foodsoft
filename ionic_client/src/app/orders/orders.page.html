@@ -4,16 +4,11 @@
                        [disabled]="olderScrollerDisabled"
                        (ionInfinite)="loadOlder()"
                        position="top">
-    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading old data...">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
   <ion-list>
-    <!-- <ion-virtual-scroll [items]="orders$ | async">
-      <ng-container *virtualItem="let item">
-        <app-order-list-item [order]="item"></app-order-list-item>
-      </ng-container>
-    </ion-virtual-scroll> -->
     <app-order-list-item *ngFor="let item of (orders$ | async)" [order]="item"></app-order-list-item>
   </ion-list>
 
@@ -22,7 +17,7 @@
                        [disabled]="newerScrollerDisabled"
                        (ionInfinite)="loadNewer()"
                        position="bottom">
-    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading new data...">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>

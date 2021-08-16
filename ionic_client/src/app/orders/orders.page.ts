@@ -11,8 +11,6 @@ import { OrdersApiService } from '../services/api/orders-api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrdersPage implements OnInit, AfterViewChecked {
-  // @ViewChild(IonVirtualScroll) public virtualScroll: IonVirtualScroll;
-
   @ViewChild('olderOrdersScroller', { static: false }) public olderOrdersScroller?: IonInfiniteScroll;
 
   @ViewChild('newerOrdersScroller', { static: false }) public newerOrdersScroller?: IonInfiniteScroll;
@@ -50,8 +48,6 @@ export class OrdersPage implements OnInit, AfterViewChecked {
     await this.fetchOrders('new');
 
     await this.newerOrdersScroller?.complete();
-
-    // this.virtualScroll.checkEnd();
   }
 
   public async loadOlder(): Promise<void> {
@@ -60,11 +56,10 @@ export class OrdersPage implements OnInit, AfterViewChecked {
 
     await this.olderOrdersScroller?.complete();
 
-    // this.virtualScroll.checkRange(0, 20);
 
-    // setTimeout(() => {
-    //   void this.content.scrollToPoint(undefined, 200);
-    // }, 100);
+    setTimeout(() => {
+      void this.content.scrollToPoint(undefined, 200);
+    }, 200);
   }
 
   public get olderScrollerDisabled(): boolean {

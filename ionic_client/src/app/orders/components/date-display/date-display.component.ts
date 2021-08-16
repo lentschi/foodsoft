@@ -22,7 +22,8 @@ export class DateDisplayComponent {
     if (!isValidDate(this.date)) {
       return undefined;
     }
-    return format(this.date, 'PP', { locale: de });
+    const customLongFormat = de.formatLong!.date({ width: 'short' }).replace('y', 'yy');
+    return format(this.date, customLongFormat, { locale: de });
   }
 }
 

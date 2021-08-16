@@ -33,6 +33,10 @@ export abstract class BaseApiService<ModelType extends AppModel> {
     const model = new this.modelType();
     for (const key of Object.keys(modelData)) {
       const value = modelData[<keyof ModelType> key];
+      if (key === 'id') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-extra-parens
+        (<any> model).serverId = modelData[<keyof ModelType> key];
+      }
       switch (this.modelType.typeMap[key]) {
         case ColumnType.Date:
           (<Date | undefined> <unknown> model[<keyof ModelType> key]) = value ? new Date(<string> <unknown> value) : undefined;

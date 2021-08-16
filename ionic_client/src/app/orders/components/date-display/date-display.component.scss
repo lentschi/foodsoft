@@ -1,14 +1,29 @@
 :host {
   padding: 3px;
-  width: 110px;
+  width: 19vw;
   text-align: center;
 }
 
 .day {
-  font-size: larger;
+  font-size: 7vw;
   font-weight: bold;
 }
 
 .details {
-  font-size: smaller;
+  font-size: 4vw;
+}
+
+
+@media screen and (min-width: 450px) {
+  .day {
+     font-size: 32px;
+  }
+
+  .details {
+    font-size: 18px;
+  }
+
+  :host {
+    width: 80px;
+  }
 }
