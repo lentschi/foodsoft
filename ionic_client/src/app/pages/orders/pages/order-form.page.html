@@ -22,7 +22,6 @@
 
       <ion-button expand="block" type="submit" [disabled]="orderFormGroup.invalid" translate>save</ion-button>
     </form>
-    LEN: {{order.orderArticles?.length | json}}
     <div *ngFor="let orderArticle of order.orderArticles">
       {{orderArticle.article.name}}
     </div>

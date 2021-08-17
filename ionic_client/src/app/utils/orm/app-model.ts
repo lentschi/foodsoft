@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { QueryCollection } from './query-collection';
+import { QueryCollection, QueryRelations } from './query-collection';
 import 'reflect-metadata';
 import { v1 as uuid } from 'uuid';
 import { RecordNotFoundError } from './errors/record-not-found-error';
@@ -159,7 +159,7 @@ export class AppModel {
     });
   }
 
-  static async createFromIndexedDbResult<T extends AppModel>(this: typeof AppModel, data: T, relationsToLoad: Array<keyof T>): Promise<T> {
+  static async createFromIndexedDbResult<T extends AppModel>(this: typeof AppModel, data: T, relationsToLoad: QueryRelations<keyof T>): Promise<T> {
     if (!data) {
       throw new Error('Cannot create instance with no data');
     }
@@ -176,17 +176,23 @@ export class AppModel {
     }
 
     for (const propertyName of Object.keys(this.hasOneRelations)) {
-      if (!relationsToLoad.includes(<keyof T> propertyName)) {
+      const loadRelationsMap = <QueryRelations<keyof AppModel>> relationsToLoad.get(<keyof T> propertyName);
+      if (!loadRelationsMap) {
         continue;
       }
 
       const relationName: string = this.hasOneRelations[propertyName];
       const relatedModelClass = AppModel.getModelClass(relationName);
-      (<AppModel> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass.findBy('id', modelInstance[<keyof T> `${propertyName}Id`]);
+      (<AppModel> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass
+        .all()
+        .include(loadRelationsMap)
+        .filter('id', QueryOperator.equal, modelInstance[<keyof T> `${propertyName}Id`])
+        .one();
     }
 
     for (const propertyName of Object.keys(this.hasManyRelations)) {
-      if (!relationsToLoad.includes(<keyof T> propertyName)) {
+      const loadRelationsMap = <QueryRelations<keyof AppModel>> relationsToLoad.get(<keyof T> propertyName);
+      if (!loadRelationsMap) {
         continue;
       }
 
@@ -194,6 +200,7 @@ export class AppModel {
       const relatedModelClass = AppModel.getModelClass(relationName);
       (<AppModel[]> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass
         .all()
+        .include(loadRelationsMap)
         .filter(<keyof AppModel> `${this.tableName.charAt(0).toLowerCase()}${this.tableName.slice(1)}Id`, QueryOperator.equal, modelInstance.id)
         .list();
     }

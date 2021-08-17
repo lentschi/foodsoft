@@ -5,6 +5,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { Order } from 'src/app/models/orm/order';
 import { OrdersApiService } from 'src/app/services/api/orders-api.service';
 import { QueryOperator } from 'src/app/utils/orm/operator-enum';
+import { QueryRelations } from 'src/app/utils/orm/query-collection';
 
 @Component({
   selector: 'app-order-form',
@@ -22,9 +23,13 @@ export class OrderFormPage {
       for (const orderArticle of orderArticles) {
         await orderArticle.save();
       }
+      const include = new Map<keyof Order, QueryRelations<string>>();
+      const orderArticlesInclude = new Map<string, QueryRelations<string>>();
+      orderArticlesInclude.set('article', new Map<string, QueryRelations<string>>());
+      include.set('orderArticles', orderArticlesInclude);
       order = await Order
         .all()
-        .prefetch('orderArticles')
+        .include(include)
         .filter('id', QueryOperator.equal, id!)
         .one();
       resolve(order);

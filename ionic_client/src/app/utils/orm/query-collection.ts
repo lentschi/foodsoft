@@ -4,8 +4,10 @@ import { AppModel } from './app-model';
 import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
+export type QueryRelations<T> = Map<T, QueryRelations<string>>;
+
 export class QueryCollection<T extends AppModel> {
-  private relationsToLoad: Array<keyof T> = [];
+  private relationsToLoad: QueryRelations<keyof T> = new Map<keyof T, QueryRelations<string>>();
 
   private filters: {property: keyof T; operator: QueryOperator; value: unknown;}[] = [];
 
@@ -219,8 +221,8 @@ export class QueryCollection<T extends AppModel> {
     return items.length;
   }
 
-  prefetch(propertyName: keyof T): QueryCollection<T> {
-    this.relationsToLoad.push(propertyName);
+  include(relationsToLoad: QueryRelations<keyof T>): QueryCollection<T> {
+    this.relationsToLoad = relationsToLoad;
     return this;
   }
 }
