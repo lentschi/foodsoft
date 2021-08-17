@@ -21,12 +21,17 @@ export class OrderFormPage {
       let order = await Order.findBy('id', id!);
       const orderArticles = await this.ordersApiService.getOrderArticles(order.serverId!);
       for (const orderArticle of orderArticles) {
+        await orderArticle.article.save();
         await orderArticle.save();
       }
+
       const include = new Map<keyof Order, QueryRelations<string>>();
+
       const orderArticlesInclude = new Map<string, QueryRelations<string>>();
-      orderArticlesInclude.set('article', new Map<string, QueryRelations<string>>());
       include.set('orderArticles', orderArticlesInclude);
+
+      orderArticlesInclude.set('article', new Map<string, QueryRelations<string>>());
+
       order = await Order
         .all()
         .include(include)
