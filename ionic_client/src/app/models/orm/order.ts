@@ -10,7 +10,7 @@ export class Order extends AppModel {
   public starts: Date;
 
   @Column()
-  public ends: Date;
+  public ends?: Date;
 
   @Column()
   public pickup: Date;

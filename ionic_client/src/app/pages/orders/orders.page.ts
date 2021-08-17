@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy,  Component, OnInit, ViewChild } from '@angular/core';
 import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { Order } from '../models/orm/order';
-import { OrdersApiService } from '../services/api/orders-api.service';
+import { Order } from '../../models/orm/order';
+import { OrdersApiService } from '../../services/api/orders-api.service';
 
 @Component({
   selector: 'app-orders',

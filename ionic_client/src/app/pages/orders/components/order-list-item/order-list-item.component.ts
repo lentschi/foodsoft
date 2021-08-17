@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { Order } from 'src/app/models/orm/order';
 import isBefore from 'date-fns/isBefore';
 import { OrderState } from 'src/app/models/enums/order-state';
-import { OrdersApiService } from 'src/app/services/api/orders-api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-list-item',
@@ -13,7 +13,7 @@ import { OrdersApiService } from 'src/app/services/api/orders-api.service';
 export class OrderListItemComponent {
   @Input() public order: Order;
 
-  public constructor(private readonly ordersApiService: OrdersApiService) {}
+  public constructor(private readonly router: Router) {}
 
   public get stateIcon(): string {
     switch (this.order.state) {
@@ -43,6 +43,6 @@ export class OrderListItemComponent {
   }
 
   public async onClick(): Promise<void> {
-    // TODO
+    await this.router.navigate(['/orders/form', { id: this.order.id }]);
   }
 }

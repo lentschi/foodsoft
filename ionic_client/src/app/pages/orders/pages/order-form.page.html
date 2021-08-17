@@ -1,0 +1,30 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title translate>{{(data$ | async)?.order?.name}}</ion-title>
+		<ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+	</ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="orderFormGroup" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
+    <ion-item>
+      <ion-label translate>starts at</ion-label>
+      <ion-datetime formControlName="starts"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label translate>ends at</ion-label>
+      <ion-datetime formControlName="ends"></ion-datetime>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="orderFormGroup.invalid" translate>save</ion-button>
+  </form>
+  <ng-container *ngIf="(data$ | async)?.orderArticles as orderArticles">
+    <div *ngFor="let orderArticle of orderArticles">
+      {{orderArticle.article.name}}
+    </div>
+  </ng-container>
+
+</ion-content>
