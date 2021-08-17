@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { Order } from 'src/app/models/orm/order';
 import { OrdersApiService } from 'src/app/services/api/orders-api.service';
+import { QueryOperator } from 'src/app/utils/orm/operator-enum';
 
 @Component({
   selector: 'app-order-form',
@@ -13,23 +13,28 @@ import { OrdersApiService } from 'src/app/services/api/orders-api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderFormPage {
-  public readonly data$ = this.activatedRoute.paramMap.pipe(
-    switchMap(params => {
+  public readonly order$ = this.activatedRoute.paramMap.pipe(
+    // eslint-disable-next-line no-async-promise-executor
+    switchMap(params => new Promise<Order>(async resolve => {
       const id = params.get('id');
-      return Order.findBy('id', id!);
-    }),
-    switchMap(order => combineLatest([of(order), this.ordersApiService.getOrderArticles(order.serverId!)])),
-    tap(async ([order, orderArticles]) => {
+      let order = await Order.findBy('id', id!);
+      const orderArticles = await this.ordersApiService.getOrderArticles(order.serverId!);
+      for (const orderArticle of orderArticles) {
+        await orderArticle.save();
+      }
+      order = await Order
+        .all()
+        .prefetch('orderArticles')
+        .filter('id', QueryOperator.equal, id!)
+        .one();
+      resolve(order);
+    })),
+    tap(order => {
       this.orderFormGroup.setValue({
         starts: order.starts.toISOString(),
         ends: order.ends?.toISOString(),
       });
-
-      for (const orderArticle of orderArticles) {
-        await orderArticle.save();
-      }
-    }),
-    map(([order, orderArticles]) => ({ order, orderArticles }))
+    })
   );
 
   public orderFormGroup = this.formBuilder.group({

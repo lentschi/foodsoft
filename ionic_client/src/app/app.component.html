@@ -9,7 +9,7 @@
       <ion-content>
         <ion-list lines="none">
           <ion-menu-toggle auto-hide="false" *ngFor="let menuPoint of menuPoints">
-            <ion-item detail="false" (click)="openMenuPoint(menuPoint)">
+            <ion-item [detail]="false" (click)="openMenuPoint(menuPoint)">
               <ion-label>
                 {{menuPoint.name$ | async}}
               </ion-label>

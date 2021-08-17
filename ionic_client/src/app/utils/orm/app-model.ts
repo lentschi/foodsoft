@@ -55,12 +55,27 @@ export function HasOne(typeName?: string) {
 }
 
 
+export function HasMany(typeName: string) {
+  return function(object: AppModel, propertyName: string) {
+    const modelClass = <typeof AppModel> object.constructor;
+
+    if (!modelClass.hasManyRelations) {
+      modelClass.hasManyRelations = {};
+    }
+    modelClass.hasManyRelations[propertyName] = <string>typeName;
+  };
+}
+
 export function PersistenceModel(tableName: string) {
   return (constructor: typeof AppModel) => {
     constructor.tableName = tableName;
 
     if (!constructor.hasOneRelations) {
       constructor.hasOneRelations = {};
+    }
+
+    if (!constructor.hasManyRelations) {
+      constructor.hasManyRelations = {};
     }
 
 
@@ -76,6 +91,8 @@ export class AppModel {
   static typeMap: {[propertyName: string]: ColumnType;};
 
   static hasOneRelations: {[propertyName: string]: string;};
+
+  static hasManyRelations: {[propertyName: string]: string;};
 
   static modelRegistry: {[propertyName: string]: typeof AppModel;} = {};
 
@@ -166,6 +183,19 @@ export class AppModel {
       const relationName: string = this.hasOneRelations[propertyName];
       const relatedModelClass = AppModel.getModelClass(relationName);
       (<AppModel> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass.findBy('id', modelInstance[<keyof T> `${propertyName}Id`]);
+    }
+
+    for (const propertyName of Object.keys(this.hasManyRelations)) {
+      if (!relationsToLoad.includes(<keyof T> propertyName)) {
+        continue;
+      }
+
+      const relationName: string = this.hasManyRelations[propertyName];
+      const relatedModelClass = AppModel.getModelClass(relationName);
+      (<AppModel[]> <unknown> modelInstance[<keyof T> propertyName]) = await relatedModelClass
+        .all()
+        .filter(<keyof AppModel> `${this.tableName.charAt(0).toLowerCase()}${this.tableName.slice(1)}Id`, QueryOperator.equal, modelInstance.id)
+        .list();
     }
 
     return modelInstance;
