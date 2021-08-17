@@ -5,7 +5,7 @@ import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
 export class QueryCollection<T extends AppModel> {
-  private relationsToLoad: string[] = [];
+  private relationsToLoad: Array<keyof T> = [];
 
   private filters: {property: keyof T; operator: QueryOperator; value: unknown;}[] = [];
 
@@ -38,7 +38,13 @@ export class QueryCollection<T extends AppModel> {
         .transaction([this.modelClass.tableName], 'readonly');
       const store = transaction.objectStore(this.modelClass.tableName);
       const request = store.get(id);
-      transaction.oncomplete = (): void => resolve(request.result);
+      transaction.oncomplete = (): void => {
+        if (request.result !== undefined) {
+          resolve(this.modelClass.createFromIndexedDbResult(request.result, this.relationsToLoad));
+        } else {
+          reject(new RecordNotFoundError());
+        }
+      };
       transaction.onerror = (e): void => reject(e);
     });
   }
@@ -213,7 +219,7 @@ export class QueryCollection<T extends AppModel> {
     return items.length;
   }
 
-  prefetch(propertyName: string): QueryCollection<T> {
+  prefetch(propertyName: keyof T): QueryCollection<T> {
     this.relationsToLoad.push(propertyName);
     return this;
   }

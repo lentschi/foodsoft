@@ -271,7 +271,9 @@ Rails.application.routes.draw do
         resources :financial_transaction_types, only: [:index, :show]
         resources :financial_transactions, only: [:index, :show]
 
-        resources :orders, only: [:index, :show]
+        resources :orders, only: [:index, :show] do
+          resources :order_articles, only: [:index]
+        end
         get :orders_today_page, controller: :orders, action: :today_page
 
         resources :order_articles, only: [:index, :show]

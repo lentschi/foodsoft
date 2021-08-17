@@ -5,6 +5,8 @@ import { v1 as uuid } from 'uuid';
 import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
+import camelcase from 'lodash-es/camelCase';
+
 export const enum ColumnType {
   integer,
   boolean,
@@ -140,7 +142,7 @@ export class AppModel {
     });
   }
 
-  static async createFromIndexedDbResult<T extends AppModel>(this: typeof AppModel, data: T, relationsToLoad: string[]): Promise<T> {
+  static async createFromIndexedDbResult<T extends AppModel>(this: typeof AppModel, data: T, relationsToLoad: Array<keyof T>): Promise<T> {
     if (!data) {
       throw new Error('Cannot create instance with no data');
     }
@@ -157,7 +159,7 @@ export class AppModel {
     }
 
     for (const propertyName of Object.keys(this.hasOneRelations)) {
-      if (!relationsToLoad.includes(propertyName)) {
+      if (!relationsToLoad.includes(<keyof T> propertyName)) {
         continue;
       }
 
@@ -167,6 +169,51 @@ export class AppModel {
     }
 
     return modelInstance;
+  }
+
+  public static unmarshalServerData<T extends AppModel>(this: typeof AppModel, modelData: Partial<T>) {
+    const model = <T> new this();
+    // eslint-disable-next-line prefer-destructuring
+    for (const key of Object.keys(modelData)) {
+      const value = modelData[<keyof T> key];
+      const targetKey = <keyof T> camelcase(key);
+
+      const md = key.match(/(.+)_id/u);
+      if (md && typeof value === 'number') {
+        const relatedModelProperty = camelcase(md[1]);
+        const relatedModelName = this.hasOneRelations[relatedModelProperty];
+        (<any> model[targetKey]) = relatedModelName !== undefined ? `${relatedModelName}-${value}` : value;
+
+        continue;
+      }
+
+      const relatedModelName = this.hasOneRelations[<string> targetKey];
+      if (relatedModelName !== undefined) {
+        const relatedModelClass = AppModel.getModelClass(relatedModelName);
+        (<AppModel> <unknown> model[targetKey]) = relatedModelClass.unmarshalServerData(<Partial<AppModel>> value);
+        if (`${targetKey}Id` in this.typeMap) {
+          (<any> model[<keyof T> `${targetKey}Id`]) = (<any> model[targetKey]).id;
+        }
+      }
+
+      if (key === 'id' && typeof value === 'number') {
+        model.id = `${this.tableName}-${value}`;
+        continue;
+      }
+
+      if (key in this.typeMap) {
+        switch (this.typeMap[key]) {
+          case ColumnType.date:
+            (<Date | undefined> <unknown> model[targetKey]) = value ? new Date(<string> <unknown> value) : undefined;
+            continue;
+          default:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (<any> model[targetKey]) = value;
+            continue;
+        }
+      }
+    }
+    return model;
   }
 
   static convertToIndexedDbValue(value: unknown, propertyType?: ColumnType): unknown {
@@ -204,7 +251,7 @@ export class AppModel {
       const idBefore = this.id;
       this.id = this.id || uuid();
       console.log(`DB:${modelClass.tableName}:PUT`, idBefore, this.id, data);
-      store.put(data, typeof idBefore === 'number' ? `${modelClass.tableName}-${this.id}` : this.id);
+      store.put(data, this.id);
 
       transaction.oncomplete = (): void => resolve();
       transaction.onerror = (e):void => reject(e);
@@ -242,6 +289,16 @@ export class AppModel {
     }
 
     return copy;
+  }
+
+  get serverId(): number | undefined {
+    const modelClass = <typeof AppModel> this.constructor;
+    const md = this.id.match(new RegExp(`^${modelClass.tableName}-([0-9]+)$`, 'u'));
+    if (!md) {
+      return undefined;
+    }
+
+    return parseInt(md[1], 10);
   }
 }
 

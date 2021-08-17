@@ -25,15 +25,15 @@ module Concerns::CollectionScope
   end
 
   def search_scope
-    s = scope
-    s = s.ransack(params[:q], auth_object: ransack_auth_object).result(distinct: true) if params[:q]
+    current_scope = scope
+    current_scope = current_scope.ransack(params[:q], auth_object: ransack_auth_object).result(distinct: true) if params[:q]
     unless params[:order].nil?
       order_hash = Hash.new
       order_hash[params[:order]] = params[:order_direction].nil? ? 'asc' : params[:order_direction]
-      s = s.order(order_hash)
+      current_scope = current_scope.order(order_hash)
     end
-    s = s.page(params[:page].to_i).per(per_page) if per_page && per_page >= 0
-    s
+    current_scope = current_scope.page(params[:page].to_i).per(per_page) if per_page && per_page >= 0
+    current_scope
   end
 
   def render_collection(scope_to_render)
