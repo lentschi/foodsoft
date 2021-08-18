@@ -282,7 +282,7 @@ Rails.application.routes.draw do
 
         resources :suppliers, only: [:show]
 
-        resources :group_orders, only: [:show]
+        resources :group_orders
       end
     end
 

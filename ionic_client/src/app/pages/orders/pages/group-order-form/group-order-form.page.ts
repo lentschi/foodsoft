@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { GroupOrder } from 'src/app/models/orm/group-order';
 import { GroupOrderArticle } from 'src/app/models/orm/group-order-article';
 import { Order } from 'src/app/models/orm/order';
@@ -18,23 +18,29 @@ import { QueryRelations } from 'src/app/utils/orm/query-collection';
 })
 export class GroupOrderFormPage {
   public readonly groupOrder$ = this.activatedRoute.paramMap.pipe(
-    // eslint-disable-next-line no-async-promise-executor
     switchMap(params => this.getGroupOrderForParams(params)),
-    tap(groupOrder => {
-      for (const controlKey of Object.keys(this.articlesFormGroup.controls)) {
-        this.articlesFormGroup.removeControl(controlKey);
-      }
-      for (const groupOrderArticle of groupOrder.groupOrderArticles) {
-        this.articlesFormGroup.addControl(groupOrderArticle.orderArticle.article.id, new FormControl(groupOrderArticle.quantity));
-      }
-    })
+    shareReplay(1),
   );
 
-  public readonly articlesFormGroup = new FormGroup({});
+  public readonly orderFormGroup$ = this.groupOrder$.pipe(
+    map(groupOrder => {
+      const articlesFormGroup = new FormGroup({});
+      const orderFormGroup = new FormGroup({
+        articles: articlesFormGroup,
+      });
 
-  public orderFormGroup = this.formBuilder.group({
-    articles: this.articlesFormGroup,
-  });
+      for (const groupOrderArticle of groupOrder.groupOrderArticles) {
+        articlesFormGroup.addControl(groupOrderArticle.orderArticle.id, new FormGroup({
+          quantity: new FormControl(groupOrderArticle.quantity, [Validators.required]),
+          tolerance: new FormControl(groupOrderArticle.tolerance, [Validators.required]),
+        }));
+      }
+
+      return orderFormGroup;
+    }),
+    shareReplay(1)
+  );
+
 
   public constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute, private readonly formBuilder: FormBuilder, private readonly ordersApiService: OrdersApiService, private readonly groupOrdersApiService: GroupOrdersApiService) {
 
@@ -44,8 +50,19 @@ export class GroupOrderFormPage {
     void this.router.navigate(['..']);
   }
 
-  public onSubmit(): void {
-    // TODO
+  public async onSubmit(): Promise<void> {
+    const groupOrder = await this.groupOrder$.pipe(take(1)).toPromise();
+    const form = await this.orderFormGroup$.pipe(take(1)).toPromise();
+    const articlesGroup = <FormGroup> form.get('articles');
+    const goas = Object.entries(articlesGroup.controls).map(([key, group]) => {
+      const goa = new GroupOrderArticle();
+      goa.quantity = parseInt(group.get('quantity')!.value, 10);
+      goa.tolerance = parseInt(group.get('tolerance')!.value, 10);
+      goa.orderArticleId = String(OrderArticle.indexedDbToServerId(key));
+
+      return goa;
+    });
+    await this.groupOrdersApiService.saveAmounts(groupOrder, goas);
   }
 
   private async getGroupOrderForParams(params: ParamMap): Promise<GroupOrder> {
@@ -67,15 +84,21 @@ export class GroupOrderFormPage {
     const orderArticles = await this.ordersApiService.getOrderArticles(Order.indexedDbToServerId(groupOrder.orderId));
     groupOrder.order = await Order.findBy('id', groupOrder.orderId);
     const goas = groupOrder.groupOrderArticles;
-    groupOrder.groupOrderArticles = orderArticles.map(orderArticle => this.extractGoa(orderArticle, goas));
+    groupOrder.groupOrderArticles = orderArticles.map(orderArticle => this.getGroupOrderArticleForOrderArticle(orderArticle, goas));
     return groupOrder;
   }
 
-  private extractGoa(orderArticle: OrderArticle, goas: GroupOrderArticle[]): GroupOrderArticle {
-    const groupOrderArticle = new GroupOrderArticle();
+  private getGroupOrderArticleForOrderArticle(orderArticle: OrderArticle, groupOrderArticles: GroupOrderArticle[]): GroupOrderArticle {
+    const groupOrderArticle = groupOrderArticles.find(goa => goa.orderArticleId === orderArticle.id) ?? new GroupOrderArticle();
     groupOrderArticle.orderArticle = orderArticle;
     groupOrderArticle.orderArticleId = orderArticle.id;
-    groupOrderArticle.quantity = goas.find(goa => goa.orderArticleId === orderArticle.id)?.quantity ?? 0;
+    if (groupOrderArticle.quantity === undefined) {
+      groupOrderArticle.quantity = 0;
+    }
+
+    if (groupOrderArticle.tolerance === undefined) {
+      groupOrderArticle.tolerance = 0;
+    }
 
     return groupOrderArticle;
   }

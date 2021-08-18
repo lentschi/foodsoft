@@ -13,4 +13,6 @@ export class GroupOrderArticle extends AppModel {
   @Column() public groupOrderId: string;
 
   @Column() public quantity: number;
+
+  @Column() public tolerance: number;
 }
