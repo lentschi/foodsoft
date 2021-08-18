@@ -280,9 +280,7 @@ Rails.application.routes.draw do
         resources :group_order_articles
         resources :article_categories, only: [:index, :show]
 
-        resources :suppliers, only: [:index] do
-          resources :articles, only: [:index]
-        end
+        resources :suppliers, only: [:show]
       end
     end
 

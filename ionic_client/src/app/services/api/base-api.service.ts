@@ -13,7 +13,9 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   public async show(id: number): Promise<ModelType> {
     const response = <Partial<ModelType>> await this.httpClient.get(`${this.modelUrl}/${id}`).toPromise();
-    return this.modelType.unmarshalServerData(response);
+    const model = this.modelType.unmarshalServerData(response);
+    await model.save();
+    return model;
   }
 
   public async paginate(paginationQuery?: PaginationQuery<ModelType>, overwriteDbOnSuccess = false): Promise<ApiPaginationResult<ModelType>> {

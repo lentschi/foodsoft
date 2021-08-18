@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Article } from 'src/app/models/orm/article';
-import { Order } from 'src/app/models/orm/order';
 import { Supplier } from 'src/app/models/orm/supplier';
 import { SettingsService } from '../settings.service';
 import { BaseApiService } from './base-api.service';
@@ -11,7 +10,7 @@ export class SuppliersApiService extends BaseApiService<Supplier> {
   protected readonly modelName = 'suppliers';
 
   public constructor(httpClient: HttpClient, settingsService: SettingsService) {
-    super(Order, httpClient, settingsService);
+    super(Supplier, httpClient, settingsService);
   }
 
   public async getArticles(supplierId: number): Promise<Article[]> {

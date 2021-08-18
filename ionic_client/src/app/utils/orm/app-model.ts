@@ -224,13 +224,26 @@ export class AppModel {
         continue;
       }
 
-      const relatedModelName = this.hasOneRelations[<string> targetKey];
-      if (relatedModelName !== undefined) {
-        const relatedModelClass = AppModel.getModelClass(relatedModelName);
-        (<AppModel> <unknown> model[targetKey]) = relatedModelClass.unmarshalServerData(<Partial<AppModel>> (key in value ? (<any> value)[key] : value));
+      const relatedHasOneModelName = this.hasOneRelations[<string> targetKey];
+      if (relatedHasOneModelName !== undefined) {
+        const relatedHasOneModelClass = AppModel.getModelClass(relatedHasOneModelName);
+        (<AppModel> <unknown> model[targetKey]) = relatedHasOneModelClass.unmarshalServerData(<Partial<AppModel>> (key in value ? (<any> value)[key] : value));
         if (`${targetKey}Id` in this.typeMap) {
           (<any> model[<keyof T> `${targetKey}Id`]) = (<any> model[targetKey]).id;
         }
+        continue;
+      }
+
+      const relatedHasManyModelName = this.hasManyRelations[<string> targetKey];
+      if (relatedHasManyModelName !== undefined && Array.isArray(value)) {
+        const relatedHasManyModelClass = AppModel.getModelClass(relatedHasManyModelName);
+        const targetArray: AppModel[] = [];
+        (<any> model[targetKey]) = targetArray;
+        for (const hasManyValue of value) {
+          const hasManyModel = relatedHasManyModelClass.unmarshalServerData(<Partial<AppModel>> (key in hasManyValue ? hasManyValue[key] : hasManyValue));
+          targetArray.push(hasManyModel);
+        }
+
         continue;
       }
 
@@ -331,9 +344,13 @@ export class AppModel {
 
   get serverId(): number {
     const modelClass = <typeof AppModel> this.constructor;
-    const md = this.id.match(new RegExp(`^${modelClass.tableName}-([0-9]+)$`, 'u'));
+    return modelClass.indexedDbToServerId(this.id);
+  }
+
+  static indexedDbToServerId(id: string): number {
+    const md = id.match(new RegExp(`^${this.tableName}-([0-9]+)$`, 'u'));
     if (!md) {
-      throw new Error(`${modelClass.tableName} model instance has no server id`);
+      throw new Error(`${this.tableName} model instance has no server id`);
     }
 
     return parseInt(md[1], 10);

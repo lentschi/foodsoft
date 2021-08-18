@@ -19,14 +19,14 @@
         <ion-label translate>ends at</ion-label>
         <ion-datetime formControlName="ends"></ion-datetime>
       </ion-item>
-      <ion-list>
+      <ion-list formGroupName="articles">
         <ion-list-header lines="full">
           <ion-label translate>articles</ion-label>
         </ion-list-header>
-        <ion-item *ngFor="let orderArticle of order.orderArticles">
-          <ion-label class="name">{{orderArticle.article.name}}</ion-label>
-          <ion-label class="name">{{orderArticle.article.unit}}</ion-label>
-          <ion-checkbox></ion-checkbox>
+        <ion-item *ngFor="let article of order.supplier.articles">
+          <ion-label class="name">{{article.name}}</ion-label>
+          <ion-label class="name">{{article.unit}}</ion-label>
+          <ion-checkbox [formControlName]="article.id"></ion-checkbox>
         </ion-item>
       </ion-list>
       <ion-button expand="block" type="submit" [disabled]="orderFormGroup.invalid" translate>save</ion-button>
