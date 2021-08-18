@@ -43,6 +43,13 @@ export class OrderListItemComponent {
   }
 
   public async onClick(): Promise<void> {
-    await this.router.navigate(['/orders/form', { id: this.order.id }]);
+    if (this.order.state === OrderState.open && this.inThePast(this.order.starts)) {
+      await this.router.navigate([
+        '/orders/group-order-form',
+        this.order.ownGroupOrderId === undefined ? { orderId: this.order.id } : { id: this.order.ownGroupOrderId },
+      ]);
+    } else {
+      await this.router.navigate(['/orders/form', { id: this.order.id }]);
+    }
   }
 }

@@ -6,6 +6,7 @@ import { RecordNotFoundError } from './errors/record-not-found-error';
 import { QueryOperator } from './operator-enum';
 
 import camelcase from 'lodash-es/camelCase';
+import { snakeCase } from 'lodash-es';
 
 export const enum ColumnType {
   integer,
@@ -225,7 +226,7 @@ export class AppModel {
       }
 
       const relatedHasOneModelName = this.hasOneRelations[<string> targetKey];
-      if (relatedHasOneModelName !== undefined) {
+      if (relatedHasOneModelName !== undefined && typeof value === 'object' && value !== null) {
         const relatedHasOneModelClass = AppModel.getModelClass(relatedHasOneModelName);
         (<AppModel> <unknown> model[targetKey]) = relatedHasOneModelClass.unmarshalServerData(<Partial<AppModel>> (key in value ? (<any> value)[key] : value));
         if (`${targetKey}Id` in this.typeMap) {
@@ -240,7 +241,8 @@ export class AppModel {
         const targetArray: AppModel[] = [];
         (<any> model[targetKey]) = targetArray;
         for (const hasManyValue of value) {
-          const hasManyModel = relatedHasManyModelClass.unmarshalServerData(<Partial<AppModel>> (key in hasManyValue ? hasManyValue[key] : hasManyValue));
+          const subKey = snakeCase(relatedHasManyModelName);
+          const hasManyModel = relatedHasManyModelClass.unmarshalServerData(<Partial<AppModel>> (subKey in hasManyValue ? hasManyValue[subKey] : hasManyValue));
           targetArray.push(hasManyModel);
         }
 
