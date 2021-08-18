@@ -1,12 +1,19 @@
-import { HasMany } from 'src/app/utils/orm/app-model';
+import { HasMany, HasOne } from 'src/app/utils/orm/app-model';
 import { PersistenceModel, AppModel, Column } from '../../utils/orm';
 import { OrderState } from '../enums/order-state';
 import { OrderArticle } from './order-article';
+import { Supplier } from './supplier';
 
 @PersistenceModel('Order')
 export class Order extends AppModel {
+  @HasOne('Supplier')
+  public supplier: Supplier;
+
   @HasMany('OrderArticle')
   public orderArticles: OrderArticle[];
+
+  @Column()
+  public supplierId: string;
 
   @Column()
   public name: string;

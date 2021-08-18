@@ -26,6 +26,11 @@ export class OrdersApiService extends BaseApiService<Order> {
     let params = new HttpParams();
     params = params.set('per_page', '-1');
     const response = <{order_articles: Partial<OrderArticle>[];}> await this.httpClient.get(`${this.modelUrl}/${orderId}/order_articles`, { params }).toPromise();
-    return response.order_articles.map(articleResponse => OrderArticle.unmarshalServerData(articleResponse));
+    const orderArticles = response.order_articles.map(articleResponse => OrderArticle.unmarshalServerData(articleResponse));
+    for (const orderArticle of orderArticles) {
+      await orderArticle.article.save();
+      await orderArticle.save();
+    }
+    return orderArticles;
   }
 }

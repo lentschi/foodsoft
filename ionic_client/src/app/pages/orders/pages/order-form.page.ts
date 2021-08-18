@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, tap } from 'rxjs/operators';
 import { Order } from 'src/app/models/orm/order';
 import { OrdersApiService } from 'src/app/services/api/orders-api.service';
+import { SuppliersApiService } from 'src/app/services/api/suppliers-api.service';
 import { QueryOperator } from 'src/app/utils/orm/operator-enum';
 import { QueryRelations } from 'src/app/utils/orm/query-collection';
 
@@ -19,11 +20,8 @@ export class OrderFormPage {
     switchMap(params => new Promise<Order>(async resolve => {
       const id = params.get('id');
       let order = await Order.findBy('id', id!);
-      const orderArticles = await this.ordersApiService.getOrderArticles(order.serverId!);
-      for (const orderArticle of orderArticles) {
-        await orderArticle.article.save();
-        await orderArticle.save();
-      }
+      await this.ordersApiService.getOrderArticles(order.serverId);
+      await this.suppliersApiService.getArticles(parseInt(order.supplierId, 10));
 
       const include = new Map<keyof Order, QueryRelations<string>>();
 
@@ -52,7 +50,7 @@ export class OrderFormPage {
     ends: [undefined],
   });
 
-  public constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute, private readonly formBuilder: FormBuilder, private readonly ordersApiService: OrdersApiService) {
+  public constructor(private readonly router: Router, private readonly activatedRoute: ActivatedRoute, private readonly formBuilder: FormBuilder, private readonly ordersApiService: OrdersApiService, private readonly suppliersApiService: SuppliersApiService) {
 
   }
 

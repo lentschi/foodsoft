@@ -227,10 +227,11 @@ export class AppModel {
       const relatedModelName = this.hasOneRelations[<string> targetKey];
       if (relatedModelName !== undefined) {
         const relatedModelClass = AppModel.getModelClass(relatedModelName);
-        (<AppModel> <unknown> model[targetKey]) = relatedModelClass.unmarshalServerData(<Partial<AppModel>> value);
+        (<AppModel> <unknown> model[targetKey]) = relatedModelClass.unmarshalServerData(<Partial<AppModel>> (key in value ? (<any> value)[key] : value));
         if (`${targetKey}Id` in this.typeMap) {
           (<any> model[<keyof T> `${targetKey}Id`]) = (<any> model[targetKey]).id;
         }
+        continue;
       }
 
       if (key === 'id' && typeof value === 'number') {
@@ -328,11 +329,11 @@ export class AppModel {
     return copy;
   }
 
-  get serverId(): number | undefined {
+  get serverId(): number {
     const modelClass = <typeof AppModel> this.constructor;
     const md = this.id.match(new RegExp(`^${modelClass.tableName}-([0-9]+)$`, 'u'));
     if (!md) {
-      return undefined;
+      throw new Error(`${modelClass.tableName} model instance has no server id`);
     }
 
     return parseInt(md[1], 10);

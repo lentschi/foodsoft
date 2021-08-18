@@ -9,6 +9,7 @@ export class InitialMigration extends IndexedMigration {
 
     store = db.createObjectStore('Order');
     store.createIndex('key', 'key');
+    store.createIndex('supplierId', 'supplierId');
 
     store = db.createObjectStore('OrderArticle');
     store.createIndex('key', 'key');
@@ -16,6 +17,10 @@ export class InitialMigration extends IndexedMigration {
     store.createIndex('articleId', 'articleId');
 
     store = db.createObjectStore('Article');
+    store.createIndex('key', 'key');
+    store.createIndex('supplierId', 'supplierId');
+
+    store = db.createObjectStore('Supplier');
     store.createIndex('key', 'key');
 
     return store.transaction;
