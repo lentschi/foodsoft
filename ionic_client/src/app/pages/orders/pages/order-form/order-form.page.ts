@@ -22,7 +22,7 @@ export class OrderFormPage {
       const id = params.get('id');
       let order = await Order.findBy('id', id!);
       await this.ordersApiService.getOrderArticles(order.serverId);
-      await this.suppliersApiService.show(Supplier.indexedDbToServerId(order.supplierId));
+      await this.suppliersApiService.get(Supplier.indexedDbToServerId(order.supplierId));
 
       const include = new Map<keyof Order, QueryRelations<string>>();
 

@@ -18,6 +18,9 @@ export class OrderListItemComponent {
   public get stateIcon(): string {
     switch (this.order.state) {
       case OrderState.open:
+        if (this.order.ownGroupOrderId !== undefined) {
+          return 'cart';
+        }
         return this.inThePast(this.order.starts) ? 'cart-outline' : 'timer-outline';
       case OrderState.finished: return 'mail-outline';
       case OrderState.received: return 'bag-check-outline';

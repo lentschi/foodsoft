@@ -12,7 +12,7 @@ export abstract class BaseApiService<ModelType extends AppModel> {
 
   public constructor(protected modelType: (new () => ModelType) & typeof AppModel, protected readonly httpClient: HttpClient, protected readonly settingsService: SettingsService) {}
 
-  public async show(id: number): Promise<ModelType> {
+  public async get(id: number): Promise<ModelType> {
     const response = await this.httpClient.get(`${this.modelUrl}/${id}`).toPromise();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-extra-parens
     const data = <Partial<ModelType>> (<any> response)[snakeCase(this.modelType.tableName)];

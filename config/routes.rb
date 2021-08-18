@@ -281,6 +281,8 @@ Rails.application.routes.draw do
         resources :article_categories, only: [:index, :show]
 
         resources :suppliers, only: [:show]
+
+        resources :group_orders, only: [:show]
       end
     end
 
