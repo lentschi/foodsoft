@@ -72,7 +72,6 @@ class Mailer < ActionMailer::Base
     mail to: user,
          subject: I18n.t('mailer.order_received.subject', name: group_order.order.name)
   end
-
   # Sends order result to the supplier
   def order_result_supplier(user, order, options = {})
     @user     = user
@@ -103,7 +102,7 @@ class Mailer < ActionMailer::Base
     @user = user
     @feedback = feedback
 
-    mail to: FoodsoftConfig[:notification][:error_recipients],
+    mail to: feedback_recipients,
          from: user,
          subject: I18n.t('mailer.feedback.subject')
   end
@@ -178,5 +177,10 @@ class Mailer < ActionMailer::Base
     address = Mail::Address.new email
     address.display_name = name
     address.format
+  end
+
+  # use the (new) feedback_recipients option, but fallback to error_recipients for backwards compatibility
+  def feedback_recipients
+    FoodsoftConfig[:notification][:feedback_recipients] || FoodsoftConfig[:notification][:error_recipients]
   end
 end

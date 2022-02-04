@@ -1,0 +1,13 @@
+{
+  "/server": {
+    "target": "http://foodsoft:3000",
+    "secure": false,
+    "pathRewrite": { "^/server": "" },
+    "changeOrigin": true
+  },
+  "/rails": {
+    "target": "http://foodsoft:3000",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

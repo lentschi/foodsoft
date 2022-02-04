@@ -1,0 +1,48 @@
+<ng-container *ngIf="order$ | async as order; else loader">
+  <form [formGroup]="orderFormGroup" (ngSubmit)="onSubmit(order)" (keyup.enter)="onSubmit(order)" class="order-form">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title translate>{{order.name}}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-list>
+        <ion-item>
+          <ion-label translate>rest to tolerance</ion-label>
+          <ion-checkbox formControlName="restToTolerance"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+    </ion-header>
+    <ion-content>
+      <ion-list formGroupName="articles">
+        <ion-list-header lines="full">
+          <ion-label translate>articles</ion-label>
+        </ion-list-header>
+        <ion-item *ngFor="let orderArticle of getRelevantOrderArticles(order)" [formGroupName]="orderArticle.id">
+          <ion-label class="name">{{orderArticle.article.name}}</ion-label>
+          <ion-label class="unit">{{orderArticle.article.unit}}</ion-label>
+          <ion-label class="ordered"><span translate>ordered</span>: {{orderArticle.unitsToOrder}}</ion-label>
+          <ion-input type="number" [placeholder]="orderArticle.unitsToOrder" formControlName="unitsReceived"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <ion-footer>
+      <ion-button *ngIf="orderFormGroup.enabled" [disabled]="orderFormGroup.invalid" expand="block" type="submit" translate>save</ion-button>
+    </ion-footer>
+  </form>
+</ng-container>
+<ng-template #loader>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <span translate>order</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ion-content>
+</ng-template>

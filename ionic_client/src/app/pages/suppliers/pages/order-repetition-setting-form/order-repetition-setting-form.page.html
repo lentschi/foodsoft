@@ -1,0 +1,52 @@
+<ng-container *ngIf="supplier$ | async as supplier; else loader">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()" class="order-repetition-setting-form">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          <span translate>order repetition</span>
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-label translate>active</ion-label>
+          <ion-checkbox formControlName="active" appValidationErrorsDisplay></ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-label translate>starts at</ion-label>
+          <ion-datetime formControlName="startsAt" appValidationErrorsDisplay></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label translate>frequency</ion-label>
+          <ion-input formControlName="frequency" type="number" appValidationErrorsDisplay></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label translate>pickup - days later</ion-label>
+          <ion-input formControlName="pickupOffset" type="number" appValidationErrorsDisplay></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <ion-footer>
+      <ion-button expand="block" type="submit" [disabled]="formGroup.invalid" translate>save</ion-button>
+    </ion-footer>
+  </form>
+</ng-container>
+<ng-template #loader>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <span translate>order repetition</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ion-content>
+</ng-template>
+

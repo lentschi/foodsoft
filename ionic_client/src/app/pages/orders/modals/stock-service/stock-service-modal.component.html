@@ -1,0 +1,77 @@
+<ng-container *ngIf="order$ | async as order; else loaderTemplate">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title translate>stock service</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="close()">
+          <ion-icon name="arrow-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-list>
+      <ion-item color="primary">
+        <ion-label translate>order</ion-label>
+        <ion-note slot="end" color="light">{{order.name}}</ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label translate>delivery date</ion-label>
+        <ion-note slot="end">{{order.pickup | formatDate}}</ion-note>
+      </ion-item>
+    </ion-list>
+  </ion-header>
+  <ion-content>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label translate color="dark">responsible person</ion-label>
+      </ion-item-divider>
+      <ng-container *ngIf="responsibleUser$ | async as user; else noUserTemplate">
+        <app-user-avatar
+          [user]="user"
+          [withName]="true"
+          [actionIcon]="(currentUserAssignedAsResponsibleUser$ | async) ? 'close-circle' : undefined"
+          (click)="unsubscribeIfCurrentUser(user)"></app-user-avatar>
+      </ng-container>
+      <div *ngIf="!(currentUserAssignedAsResponsibleUser$ | async)" class="add-button">
+        <ion-chip (click)="signUp()" color="primary">
+          <ion-icon name="add-circle"></ion-icon>
+          <ion-label translate>sign up</ion-label>
+        </ion-chip>
+      </div>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label translate>helpers</ion-label>
+      </ion-item-divider>
+      <ng-container *ngIf="helpers$ | async as helpers; else noUserTemplate">
+        <app-user-avatar
+          *ngFor="let user of helpers"
+          [user]="user"
+          [withName]="true"
+          [actionIcon]="(isCurrentUser$(user) | async) ? 'close-circle' : undefined"
+          (click)="unsubscribe(user)"></app-user-avatar>
+      </ng-container>
+    </ion-item-group>
+    <ng-template #noUserTemplate>
+      <app-user-avatar [withName]="true" [noUserLabel]="'no one' | translate"></app-user-avatar>
+    </ng-template>
+    <div *ngIf="!(currentUserAssigned$ | async)" class="add-button">
+      <ion-chip (click)="signUp(false)" color="primary">
+        <ion-icon name="add-circle"></ion-icon>
+        <ion-label translate>sign up</ion-label>
+      </ion-chip>
+    </div>
+  </ion-content>
+</ng-container>
+
+<ng-template #loaderTemplate>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <span translate>stock service</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ion-content>
+</ng-template>

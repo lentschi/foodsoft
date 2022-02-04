@@ -6,6 +6,7 @@ class User < ApplicationRecord
   # TODO: acts_as_paraniod ??
 
   has_many :memberships, :dependent => :destroy
+  has_many :webpush_notification_endpoints, :dependent => :destroy
   has_many :groups, :through => :memberships
   # has_one :ordergroup, :through => :memberships, :source => :group, :class_name => "Ordergroup"
   def ordergroup
@@ -18,6 +19,8 @@ class User < ApplicationRecord
   has_many :send_messages, :class_name => "Message", :foreign_key => "sender_id"
   has_many :created_orders, :class_name => 'Order', :foreign_key => 'created_by_user_id', :dependent => :nullify
   has_many :mail_delivery_status, :class_name => 'MailDeliveryStatus', :foreign_key => 'email', :primary_key => 'email'
+
+  has_one_attached :avatar
 
   attr_accessor :create_ordergroup, :password, :send_welcome_mail, :settings_attributes
 
@@ -250,5 +253,40 @@ class User < ApplicationRecord
     # would be sensible to match ApplicationController#show_user
     #   this should not be part of the model anyway
     { :id => id, :name => "#{display} (#{ordergroup.try(:name)})" }
+  end
+
+  # Just for debugging purposes:
+  def notify(title, message)
+    self.webpush_notification_endpoints.each do |endpoint|
+    #   {
+    #     "notification": {
+    #         "title": "New hoi",
+    #         "message": "Test",
+    #         "data": {
+    #             "onActionClick": {
+    #                 "default": {
+    #                     "operation": "navigateLastFocusedOrOpen",
+    #                     "url": "orders"
+    #                 }
+    #             }
+    #         }
+    #     }
+    # }
+      notification = Hash.new
+      notification[:notification] = Hash.new
+      notification[:notification][:title] = title
+      notification[:notification][:message] = message
+      notification[:notification][:data] = Hash.new
+      notification[:notification][:data][:onActionClick] = Hash.new
+      notification[:notification][:data][:onActionClick][:default] = Hash.new
+      notification[:notification][:data][:onActionClick][:default][:operation] = 'navigateLastFocusedOrOpen'
+      notification[:notification][:data][:onActionClick][:default][:url] = 'ruebezahl17/orders'
+      begin
+        Webpush.payload_send(endpoint: endpoint.url, message: notification.to_json, auth: endpoint.auth_key, p256dh: endpoint.p256dh_key, ttl: 24*60*60, vapid: {subject: 'test', public_key: "BGJXFFQc_WeB8y-B8iI15PsXml3eZrdnU8b3SKE78_FpYlAZOBSeyuoXw6yQQ85TmTQFzAV6MA55cmFhbMRyMbo=", private_key: "PfHu5QKT16R2-8DLgPEJhETFvYugKjL1FAMl99GN3nQ="})
+      rescue Webpush::InvalidSubscription => exception
+        # Expired -> destroy it:
+        endpoint.destroy
+      end
+    end
   end
 end

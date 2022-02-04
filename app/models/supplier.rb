@@ -9,6 +9,7 @@ class Supplier < ApplicationRecord
   has_many :invoices
   belongs_to :supplier_category
   belongs_to :shared_supplier, optional: true # for the sharedLists-App
+  belongs_to :order_repetition_setting, optional: true
 
   validates :name, :presence => true, :length => { :in => 4..30 }
   validates :phone, :presence => true, :length => { :in => 8..25 }

@@ -1,0 +1,44 @@
+<ng-container *ngIf="groupOrder$ | async as groupOrder; else loader">
+  <form *ngIf="orderFormGroup$ | async as orderFormGroup" [formGroup]="orderFormGroup" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()" class="order-form">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          <span translate>group order</span>
+          - {{groupOrder.order.name}}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list formGroupName="articles">
+        <ion-item *ngFor="let groupOrderArticle of groupOrder.groupOrderArticles"
+                  [formGroupName]="groupOrderArticle.orderArticle.id">
+          <ion-label class="name">{{groupOrderArticle.orderArticle.article.name}}</ion-label>
+          <ion-label class="unit">{{groupOrderArticle.orderArticle.article.unit}}</ion-label>
+          <ion-input type="number" placeholder="quantity" formControlName="quantity"></ion-input>
+          <ion-input type="number" placeholder="tolerance" formControlName="tolerance"></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <ion-footer>
+      <ion-button expand="block" type="submit" [disabled]="orderFormGroup.invalid" translate>save</ion-button>
+    </ion-footer>
+  </form>
+</ng-container>
+<ng-template #loader>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <span translate>group order</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ion-content>
+</ng-template>
+

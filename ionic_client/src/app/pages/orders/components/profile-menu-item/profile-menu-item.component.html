@@ -1,0 +1,6 @@
+<ion-item>
+  <app-user-avatar *ngIf="user$ | async as user" [user]="user" slot="start"></app-user-avatar>
+  <ion-label>
+    {{menuItemConfig.name$ | async}}
+  </ion-label>
+</ion-item>

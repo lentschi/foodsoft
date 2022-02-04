@@ -3,6 +3,8 @@ class Task < ApplicationRecord
   has_many :users, :through => :assignments
   belongs_to :workgroup, optional: true
   belongs_to :periodic_task_group, optional: true
+  belongs_to :responsible_user, :class_name => 'User', :foreign_key => 'responsible_user_id', optional: true
+  has_one :order
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by_user_id', optional: true
 
   scope :non_group, -> { where(workgroup_id: nil, done: false) }

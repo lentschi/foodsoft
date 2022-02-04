@@ -1,0 +1,17 @@
+<ion-app>
+  <ion-split-pane contentId="main">
+    <ion-menu side="start" contentId="main">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title translate>menu</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list lines="none">
+          <app-main-menu></app-main-menu>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

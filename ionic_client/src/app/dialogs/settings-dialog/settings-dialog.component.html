@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title translate>settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="modalCtrl.dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list lines="full" class="ion-no-margin settings">
+    <ng-container *ngFor="let setting of settings">
+      <ng-container *ngComponentOutlet="setting.inlineComponent; injector:setting.valueInjector"></ng-container>
+    </ng-container>
+  </ion-list>
+</ion-content>

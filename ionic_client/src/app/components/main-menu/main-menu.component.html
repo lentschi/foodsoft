@@ -1,0 +1,18 @@
+<ion-menu-toggle auto-hide="false" *ngFor="let menuPoint of menuPoints">
+  <ng-container *ngIf="menuPoint.display$ == null || (menuPoint.display$ | async)">
+
+    <ng-container *ngIf="menuPoint.itemComponentType && menuPoint.itemInjector; else defaultItemTemplate">
+      <ng-container *ngComponentOutlet="menuPoint.itemComponentType; injector: menuPoint.itemInjector"></ng-container>
+    </ng-container>
+
+    <ng-template #defaultItemTemplate>
+      <ion-item [detail]="false" (click)="openMenuPoint(menuPoint)">
+        <ion-icon *ngIf="menuPoint.icon" [name]="menuPoint.icon" slot="start"></ion-icon>
+        <ion-label>
+          {{menuPoint.name$ | async}}
+        </ion-label>
+      </ion-item>
+    </ng-template>
+
+  </ng-container>
+</ion-menu-toggle>

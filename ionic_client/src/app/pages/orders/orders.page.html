@@ -1,0 +1,49 @@
+<ion-header>
+	<ion-toolbar color="primary">
+		<ion-title>Foodsoft</ion-title>
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToToday()">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="reloadList()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="initialized$ | async; else loaderTemplate">
+    <ion-infinite-scroll #olderOrdersScroller
+                        *ngIf="(orders$ | async)!.length > 0"
+                        [disabled]="olderScrollerDisabled"
+                        (ionInfinite)="loadOlder()"
+                        position="top">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <ion-list>
+      <app-order-list-item *ngFor="let item of (ordersBeforeToday$ | async)" [order]="item" [focused]="(focusedOrderId$ | async) === item.id && item.id !== undefined"></app-order-list-item>
+      <ion-item fill="solid" class="today-item">
+        <div #todayMarker class="today-marker" translate>today</div>
+      </ion-item>
+      <app-order-list-item *ngFor="let item of (ordersAfterToday$ | async)" [order]="item" [focused]="(focusedOrderId$ | async) === item.id && item.id !== undefined"></app-order-list-item>
+    </ion-list>
+
+    <ion-infinite-scroll #newerOrdersScroller
+                        *ngIf="(orders$ | async)!.length > 0"
+                        [disabled]="newerScrollerDisabled$ | async"
+                        (ionInfinite)="loadNewer()"
+                        position="bottom">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-container>
+  <ng-template #loaderTemplate>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ng-template>
+</ion-content>

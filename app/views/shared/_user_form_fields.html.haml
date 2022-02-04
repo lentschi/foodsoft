@@ -9,6 +9,14 @@
 - password_html = autocomplete_flag_to_password_html(local_assigns[:password_autocomplete])
 = f.input :password, :required => f.object.new_record?, input_html: password_html
 = f.input :password_confirmation, :required => f.object.new_record?, input_html: password_html
+.control-group.file.optional.user_avatar
+  %label.user_avatar.optional.control-label
+    = t 'activerecord.attributes.user.avatar'
+  .controls
+    - if f.object.avatar.attached?
+      %div
+        %img{src: url_for(f.object.avatar)}
+    = f.file_field :avatar, accept: 'image/png, image/gif, image/jpeg'
 = f.input :phone
 - if FoodsoftConfig[:use_iban]
   = f.input :iban

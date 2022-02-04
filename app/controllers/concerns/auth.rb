@@ -5,8 +5,6 @@
 module Concerns::Auth
   extend ActiveSupport::Concern
 
-  protected
-
   def current_user
     # check if there is a valid session and return the logged-in user (its object)
     if session[:user_id] && params[:foodcoop]
@@ -19,8 +17,6 @@ module Concerns::Auth
     session[:return_to] = request.original_url
     redirect_to root_url, alert: I18n.t('application.controller.error_denied', sign_in: ActionController::Base.helpers.link_to(t('application.controller.error_denied_sign_in'), login_path))
   end
-
-  private
 
   def login(user)
     session[:user_id] = user.id
@@ -75,6 +71,7 @@ module Concerns::Auth
       end
     end
   end
+
 
   def authenticate_admin
     authenticate('admin')

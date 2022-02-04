@@ -1,0 +1,47 @@
+.content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.avatar {
+  // padding: 10px;
+}
+
+.planned {
+  color: var(--ion-color-medium);
+}
+
+
+.name {
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.state {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 10px
+}
+
+ion-item::part(native) {
+  cursor: pointer;
+}
+
+ion-item::part(native):hover {
+  background-color: var(--ion-color-light);
+}
+
+ion-item.focused::part(native) {
+  background-color: var(--ion-color-primary-tint);
+  // Using transition to .focus-fadeout as workaround - see https://github.com/w3c/csswg-drafts/issues/1516
+  transition: background-color 2s;
+}
+
+ion-item.focused.focus-fadeout::part(native) {
+  background-color: var(--background);
+}
+

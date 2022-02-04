@@ -1,0 +1,10 @@
+<ion-list (click)="popoverController.dismiss()">
+  <ng-container *ngFor="let menuPoint of filteredMenuPoints; let i = index">
+    <ion-item *ngIf="menuPoint.routerLink" [routerLink]="menuPoint.routerLink" [relativeTo]="activatedRoute">
+      <ion-label [class.first]="i === 0">{{menuPoint.label}}</ion-label>
+    </ion-item>
+    <ion-item *ngIf="menuPoint.callbackFn" class="ion-activatable cursor-pointer" (click)="menuPoint.callbackFn()">
+      <ion-label [class.first]="i === 0">{{menuPoint.label}}</ion-label>
+    </ion-item>
+  </ng-container>
+</ion-list>

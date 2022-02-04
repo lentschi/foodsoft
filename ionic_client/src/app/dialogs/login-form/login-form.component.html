@@ -1,0 +1,20 @@
+<form *ngIf="loginFormGroup" [formGroup]="loginFormGroup" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
+  <ion-item>
+    <ion-label>Username</ion-label>
+    <ion-input formControlName="userName"></ion-input>
+  </ion-item>
+  <ng-container *ngIf="loginFormGroup.get('userName') as userName">
+    <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="error ion-padding">
+      user name is required
+    </div>
+  </ng-container>
+  <ion-item>
+    <ion-label>Password</ion-label>
+    <ion-input type="password" formControlName="password"></ion-input>
+  </ion-item>
+  <div class="error ion-padding" *ngIf="loginFailed">
+    <ion-icon name="warning-outline"></ion-icon>
+    Login failed
+  </div>
+  <ion-button expand="block" type="submit" [disabled]="!formValidExceptForLoginFailure">Login</ion-button>
+</form>

@@ -1,0 +1,67 @@
+:host {
+  // copied rules and variable values from (non-public) scss files at
+  // https://github.com/ionic-team/ionic-framework/tree/630848ae5ccd4aea98c6bb36def0d424ccce1318/core/src/components/item
+  // (would only be applied to ion-avatar slotted in ion-item):
+
+  width: var(--list-user-avatar-size);
+  height: var(--list-user-avatar-size);
+  margin-top: var(--list-user-avatar-margin-top);
+  margin-bottom: var(--list-user-avatar-margin-bottom);
+  margin-right: unset;
+  margin-inline-end: var(--list-user-avatar-margin-inline-end);
+}
+
+ion-avatar.in-list, ion-avatar.in-list ion-img {
+  width: 100%;
+  height: 100%;
+}
+
+@mixin circle($width) {
+  width: $width;
+  height: $width;
+  border-radius: var(--user-avatar-border-radius);
+}
+
+.avatar-fallback {
+  @include circle(var(--list-user-avatar-size));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 1px;
+  border-style: solid;
+  font-weight: bold;
+  letter-spacing: 1px;
+
+  &.initials {
+    color: rgb(var(--initials-background-color));
+    background-color: rgba(var(--initials-background-color), 0.15);
+    border-color: rgb(var(--initials-background-color));
+  }
+
+  &.missing {
+    color: var(--ion-color-medium);
+    background-color: rgba(var(--ion-color-medium-rgb), 0.15);
+    border-color: var(--ion-color-medium);
+  }
+}
+
+ion-chip {
+  .avatar-fallback {
+    width: var(--chip-user-avatar-width);
+    height: var(--chip-user-avatar-height);
+    margin-inline-start: var(--chip-user-avatar-margin-inline-start);
+    margin-inline-end: var(--chip-user-avatar-margin-inline-end);
+  }
+}
+
+.its-you-hint {
+  display: inline-block;
+
+  &::before {
+    content: '('
+  }
+
+  &::after {
+    content: ')';
+  }
+}

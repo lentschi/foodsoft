@@ -1,0 +1,76 @@
+version: '3'
+services:
+
+  foodsoft:
+    extends: foodsoft_worker
+    command: ./proc-start web
+    ports:
+      - "3000:3000"
+
+  foodsoft_cron:
+    extends: foodsoft_worker
+    command: ./proc-start cron
+
+  foodsoft_worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    command: ./proc-start worker
+    volumes:
+      - bundle:/usr/local/bundle
+      - .:/app
+    environment:
+      - DATABASE_URL=mysql2://root:secret@mariadb/development?encoding=utf8mb4
+      - REDIS_URL=redis://redis:6379
+      - TEST_DATABASE_URL=mysql2://root:secret@mariadb/test?encoding=utf8mb4
+      - DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true
+      - MAILCATCHER_ADDRESS=mailcatcher
+      - MAILCATCHER_PORT=25
+
+  mailcatcher:
+    restart: always
+    image: tophfr/mailcatcher
+    ports:
+      - "1080:80"
+
+  mariadb:
+    restart: always
+    image: mariadb:10.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=development
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   environment:
+  #     - PMA_HOST=mariadb
+  #     - PMA_USER=root
+  #     - PMA_PASSWORD=secret
+  #   ports:
+  #     - "2080:80"
+
+  redis:
+    restart: always
+    image: redis:6.2-alpine
+
+  app:
+    restart: always
+    build:
+      context: .
+      dockerfile: docker-dev-config/app/Dockerfile
+      args:
+        config_path: ./docker-dev-config/app
+    volumes:
+      - ./ionic_client:/srv/project
+      - ./docker-dev-config/app:/srv/config
+    ports:
+      - 8100:8100
+
+volumes:
+  bundle:
+  mariadb:

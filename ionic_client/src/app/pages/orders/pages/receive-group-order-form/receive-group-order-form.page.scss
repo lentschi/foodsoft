@@ -1,0 +1,33 @@
+.group-order-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.article {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  > * {
+    flex: 1;
+    max-width: none;
+  }
+
+  ion-input {
+    border-color: var(--ion-color-light);
+    border-width: thin;
+    border-style: solid;
+    border-radius: 3px;
+    width: 60px;
+    flex: none;
+    text-align: right;
+  }
+
+  &:hover ion-input, ion-input.has-focus {
+    border-color: var(--ion-color-medium);
+  }
+
+}
+
+

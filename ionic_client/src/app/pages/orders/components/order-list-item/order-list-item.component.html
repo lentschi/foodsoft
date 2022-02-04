@@ -1,0 +1,13 @@
+<ion-item
+  [appContextMenu]="contextMenuConfig"
+  [class.focused]="focused"
+  [class.focus-fadeout]="focusFadeout"
+  [class.planned]="order.state === OrderState.planned">
+  <app-user-avatar slot="start" [user]="order.task?.responsibleUser" (click)="onAvatarClick($event)"></app-user-avatar>
+  <div class="content">
+    <ion-label class="name">{{order.name}}</ion-label>
+    <ion-icon class="state" [name]="stateIcon"></ion-icon>
+    <app-date-display [date]="order.ends" [active]="inTheFuture(order.ends)" class="ends-at"></app-date-display>
+    <app-date-display [date]="order.pickup" [active]="inTheFuture(order.pickup)" class="pickup-at"></app-date-display>
+  </div>
+</ion-item>

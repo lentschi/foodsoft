@@ -212,6 +212,13 @@ class GroupOrderArticle < ApplicationRecord
     (quantity - result) * -1
   end
 
+  def update_summaries
+    # Update the price attribute of new GroupOrder
+    group_order.update_price!
+    # Update units_to_order of order_article
+    order_article.update_results! if order_article.article.is_a?(StockArticle)
+  end
+
   private
 
   def check_order_not_closed

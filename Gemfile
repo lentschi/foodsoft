@@ -55,6 +55,7 @@ gem 'gaffe'
 gem 'ruby-filemagic'
 gem 'mime-types'
 gem 'midi-smtp-server'
+gem 'webpush'
 
 # we use the git version of acts_as_versioned, and need to include it in this Gemfile
 gem 'acts_as_versioned', git: 'https://github.com/technoweenie/acts_as_versioned.git'
@@ -67,7 +68,7 @@ gem 'foodsoft_polls', path: 'plugins/polls'
 
 # plugins not enabled by default
 # gem 'foodsoft_current_orders', path: 'plugins/current_orders'
-gem 'foodsoft_printer', path: 'plugins/printer'
+# gem 'foodsoft_printer', path: 'plugins/printer'
 # gem 'foodsoft_uservoice', path: 'plugins/uservoice'
 
 group :development do
@@ -75,6 +76,7 @@ group :development do
   gem 'mailcatcher'
   gem 'web-console'
   gem 'listen'
+  gem 'byebug'
 
   # Better error output
   gem 'better_errors'

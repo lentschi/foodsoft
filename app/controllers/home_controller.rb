@@ -78,7 +78,7 @@ class HomeController < ApplicationController
     params
       .require(:user)
       .permit(:first_name, :last_name, :email, :phone,
-              :password, :password_confirmation).merge(params[:user].slice(:settings_attributes))
+              :password, :password_confirmation, :avatar).merge(params[:user].slice(:settings_attributes))
   end
 
   def ordergroup_params

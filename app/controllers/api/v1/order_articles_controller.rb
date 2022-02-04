@@ -18,7 +18,10 @@ class Api::V1::OrderArticlesController < Api::V1::BaseController
   end
 
   def search_scope
-    merge_ordered_scope(super, params.fetch(:q, {})[:ordered])
+    merged_scope = merge_ordered_scope(super, params.fetch(:q, {})[:ordered])
+    order_id = params.fetch(:order_id)
+    merged_scope = merged_scope.where(order_id: order_id) unless order_id.nil?
+    merged_scope
   end
 
   def merge_ordered_scope(scope, ordered)

@@ -8,10 +8,12 @@ public/assets
 public/system
 public/uploads
 vendor/bundle
+storage
 
 # no configuration
 config/*.yml
 !config/i18n-js.yml
+!config/storage.yml
 config/environments/development.rb
 
 # IDEs, Developer tools
@@ -39,3 +41,7 @@ Capfile
 config/deploy
 config/deploy.rb
 Gemfile.capistrano*
+
+.env
+.vscode
+.byebug_history

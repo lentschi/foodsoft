@@ -31,11 +31,11 @@ class GroupOrderArticlesController < ApplicationController
     if goa && goa.update_attributes(params[:group_order_article])
       @group_order_article = goa
 
-      update_summaries(@group_order_article)
+      @group_order_article.update_summaries
       render :create
 
     elsif @group_order_article.save
-      update_summaries(@group_order_article)
+      @group_order_article.update_summaries
       render :create
 
     else # Validation failed, show form
@@ -50,7 +50,7 @@ class GroupOrderArticlesController < ApplicationController
       @group_order_article.update_attributes(params[:group_order_article])
     end
 
-    update_summaries(@group_order_article)
+    @group_order_article.update_summaries
     @ordergroup = current_user.ordergroup
 
     render :update
@@ -64,19 +64,12 @@ class GroupOrderArticlesController < ApplicationController
     else
       @group_order_article.destroy
     end
-    update_summaries(@group_order_article)
+    @group_order_article.update_summaries
 
     render :update
   end
 
   protected
-
-  def update_summaries(group_order_article)
-    # Update the price attribute of new GroupOrder
-    group_order_article.group_order.update_price!
-    # Update units_to_order of order_article
-    group_order_article.order_article.update_results! if group_order_article.order_article.article.is_a?(StockArticle)
-  end
 
   def find_group_order_article
     @group_order_article = GroupOrderArticle.find(params[:id])

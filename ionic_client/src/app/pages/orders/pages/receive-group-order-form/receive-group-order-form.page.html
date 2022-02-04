@@ -1,0 +1,43 @@
+<ng-container *ngIf="groupOrder$ | async as groupOrder; else loader">
+  <form [formGroup]="groupOrderFormGroup" class="group-order-form">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          <span translate>self service</span>
+          - {{groupOrder.order.name}}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list formGroupName="articles">
+        <ion-list-header lines="full">
+          <ion-label translate>articles</ion-label>
+        </ion-list-header>
+        <ion-item *ngFor="let groupOrderArticle of getRelevantGroupOrderArticles(groupOrder)">
+          <div class="article">
+            <ion-label class="name">{{groupOrderArticle.orderArticle.article.name}}</ion-label>
+            <ion-label class="unit">{{groupOrderArticle.orderArticle.article.unit}}</ion-label>
+            <ion-input type="number" [formControlName]="groupOrderArticle.id"></ion-input>
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </form>
+</ng-container>
+<ng-template #loader>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <span translate>self service</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-spinner class="centered-spinner"></ion-spinner>
+  </ion-content>
+</ng-template>

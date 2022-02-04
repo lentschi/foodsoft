@@ -1,0 +1,14 @@
+<ion-list (click)="popoverController.dismiss()">
+  <ng-container *ngIf="hasGroupOrder">
+    <ion-item
+      *ngIf="order.ownGroupOrderId !== undefined; else createGroupOrderItemTemplate"
+      [routerLink]="['/orders/group-order-form', {id: order.ownGroupOrderId}]"
+      translate>edit group order</ion-item>
+    <ng-template #createGroupOrderItemTemplate>
+      <ion-item
+        [routerLink]="['/orders/group-order-form', {orderId: order.id}]"
+        translate>create group order</ion-item>
+    </ng-template>
+  </ng-container>
+  <ion-item [routerLink]="['/orders/form', {id: order.id}]" translate>edit order</ion-item>
+</ion-list>

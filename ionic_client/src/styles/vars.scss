@@ -1,0 +1,35 @@
+:root {
+  --error-color: #cc0000;
+
+  --ion-margin: 16px;
+  --ion-padding: 16px;
+}
+
+// https://github.com/ionic-team/ionic-framework/blob/main/core/src/components/item
+
+.md {
+  --list-user-avatar-margin-top: 8px;
+  --list-user-avatar-margin-bottom: 8px;
+  --list-user-avatar-margin-inline-end: 16px;
+  --list-user-avatar-size: 40px;
+}
+
+.ios {
+  --list-user-avatar-margin-top: 0px;
+  --list-user-avatar-margin-bottom: 0px;
+  --list-user-avatar-margin-inline-end: 20px;
+  --list-user-avatar-size: 36px;
+}
+
+//https://github.com/ionic-team/ionic-framework/blob/main/core/src/components/avatar
+
+.md, .ios {
+  --user-avatar-border-radius: 50%;
+
+  // Couldn't actually find those anywhere in the source:
+  --chip-user-avatar-margin-inline-start: -8px;
+  --chip-user-avatar-margin-inline-end: 8px;
+  --chip-user-avatar-width: 24px;
+  --chip-user-avatar-height: 24px;
+}
+

@@ -7,6 +7,12 @@ Rails.application.routes.draw do
 
   root to: 'sessions#redirect_to_foodcoop', as: nil
 
+  namespace :api do
+    namespace :v1 do
+      resource :default_foodcoop, only: [:show]
+    end
+  end
+
   scope '/:foodcoop' do
     use_doorkeeper
 
@@ -284,13 +290,39 @@ Rails.application.routes.draw do
           resources :group_order_articles
         end
 
+        namespace :finance do
+          resources :order, controller: 'balancing', path: 'balancing', only: [] do
+            member do
+              post :close
+            end
+          end
+        end
+
         resources :financial_transaction_classes, only: [:index, :show]
         resources :financial_transaction_types, only: [:index, :show]
         resources :financial_transactions, only: [:index, :show]
-        resources :orders, only: [:index, :show]
+
+        resources :orders, only: [:index, :show, :update, :create, :destroy] do
+          member do
+            post :finish, :receive
+          end
+          resources :order_articles, only: [:index]
+          resource :stock_services, only: [:update, :destroy]
+        end
+        get :orders_today_page, controller: :orders, action: :today_page
+
         resources :order_articles, only: [:index, :show]
         resources :group_order_articles
         resources :article_categories, only: [:index, :show]
+
+        resources :suppliers, only: [:index, :show] do
+          resource :order_repetition_settings, only: [:update, :destroy]
+        end
+
+        resource :webpush_notification_endpoints, only: [:update]
+        resources :webpush_notification_endpoints, only: [:destroy]
+
+        resources :group_orders
       end
     end
 

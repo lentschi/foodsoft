@@ -1,0 +1,30 @@
+ion-infinite-scroll {
+  height: 55px;
+}
+
+ion-list.list-md {
+  padding: 0;
+}
+
+.today-item {
+  --background: var(--ion-color-light-tint);
+  --border-style: none;
+  --min-height: 30px;
+  border-top: 1px solid var(--ion-color-primary);
+  border-bottom: 1px solid var(--ion-color-primary);
+}
+
+.today-marker {
+  width: 100%;
+  color: var(--ion-color-primary);
+  text-align: center;
+  font-size: smaller;
+
+  &::before {
+    content: '- ';
+  }
+
+  &::after {
+    content: ' -';
+  }
+}

@@ -1,0 +1,45 @@
+<ng-container *ngIf="withName; else noNameTemplate">
+  <ion-chip [color]="chipColor" [appContextPopover]="user ? UserDetailsComponent : undefined" [appContextPopoverProps]="{user: user}">
+    <ng-container *ngIf="user; else noUserTemplate">
+      <ng-container *ngTemplateOutlet="avatarTemplate; context: {user: user}"></ng-container>
+      <ion-label>
+        {{user.name}}
+        <span *ngIf="isCurrentUser" translate class="its-you-hint">you</span>
+      </ion-label>
+      <ion-icon *ngIf="actionIcon" [name]="actionIcon" (click)="actionIconClick.emit($event)"></ion-icon>
+    </ng-container>
+    <ng-template #noUserTemplate>
+      <ng-container *ngTemplateOutlet="noUserAvatarTemplate"></ng-container>
+      <ng-container *ngIf="noUserLabel; else defaultNoUserLabel">
+        <ion-label>{{noUserLabel}}</ion-label>
+      </ng-container>
+      <ng-template #defaultNoUserLabel>
+        <ion-label translate>unknown</ion-label>
+      </ng-template>
+    </ng-template>
+  </ion-chip>
+</ng-container>
+
+<ng-template #noNameTemplate>
+  <ng-container *ngIf="user; else noUserAvatarTemplate">
+    <ng-container *ngTemplateOutlet="avatarTemplate; context: {user: user, inList: true}"></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #avatarTemplate let-user="user" let-inList="inList">
+  <div *ngIf="!user.avatarUrl; else avatarTemplate"
+      [style.--initials-background-color]="getUserInitialsColor(user)"
+      class="avatar-fallback initials">
+    {{user.initials}}
+  </div>
+
+  <ng-template #avatarTemplate>
+    <ion-avatar class="avatar" [class.in-list]="inList">
+      <ion-img [src]="baseUrl + user.avatarUrl"></ion-img>
+    </ion-avatar>
+  </ng-template>
+</ng-template>
+
+<ng-template #noUserAvatarTemplate>
+  <div class="avatar-fallback missing">?</div>
+</ng-template>
