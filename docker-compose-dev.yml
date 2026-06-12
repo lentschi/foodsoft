@@ -30,12 +30,16 @@ services:
       - "1080:80"
 
   mariadb:
-    image: mariadb:10.5
+    # TODO-no-commit
+    image: mariadb:10.11
     environment:
       - MYSQL_ROOT_PASSWORD=secret
       - MYSQL_DATABASE=development
     volumes:
       - mariadb:/var/lib/mysql
+    ports:
+      # TODO-no-commit
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

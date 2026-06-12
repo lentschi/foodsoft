@@ -84,6 +84,8 @@ gem 'foodsoft_wiki', path: 'plugins/wiki'
 # gem 'foodsoft_mollie', path: 'plugins/mollie'
 
 group :development do
+  # TODO-no-commit
+  gem 'byebug'
   gem 'listen'
   gem 'mailcatcher'
   gem 'sqlite3', '~> 2.7'
