@@ -8,6 +8,8 @@ Foodsoft 5.0 bringt drei grundsätzliche Anpassungen:
 
 3. Neue Artikelsynchronisation zwischen beliebigen Lieferanten
 
+4. Technische Aktualisierung
+
 Die folgende Kurzdokumentation geht hauptsächlich auf Punkt 1 ein, da dieser für die Artikeladministration die größten Umstellungen mit sich bringt.
 
 ## 1. Standardisierte Artikeleinheiten
@@ -66,6 +68,8 @@ Beispiel Bierkiste: *Bestellbar von Lieferantin in* ist „Kiste“, erste Zeile
 
 Optionale Menge (bezogen auf *Bestellbar von Lieferantin in*), die insgesamt von allen Bestellgruppen einer Bestellung erreicht werden muss, damit dieser Artikel tatsächlich beim Lieferanten bestellt wird. (Ähnlich wie bei der Gebindegröße kann auch hier von den einzelnen Bestellgruppen eine Toleranz angegeben werden, für den Fall, dass die Bestellung noch unter der Mindestbestellmenge liegt.)
 
+*Beispiel: Die Lieferantin verlangt, dass mindestens 5 Kisten Bier bestellt werden. 6 oder 7 Kisten sind aber auch möglich.*
+
 #### Wird abgerechnet nach
 
 Artikeleinheit, in die an folgenden Stellen in der Foodsoft umgerechnet wird:
@@ -79,6 +83,8 @@ Artikeleinheit, in die an folgenden Stellen in der Foodsoft umgerechnet wird:
 * Finanzen → Bestellung abrechnen
 
 Hinweis: Das Feld ist nur verfügbar, wenn *Bestellbar von Lieferantin in* in andere Einheiten umgerechnet werden kann (d. h. wenn es entweder auf einer SI-Einheit wie Kilogramm basiert oder über *Inhalt* definiert wurde, worauf umgerechnet werden kann).
+
+*Beispiel: Tofu wird packungsweise bestellt, aber die Lieferantin verrechnet die abgefüllte Menge genau nach Gramm. Je Mitglied wird die erhaltene Menge in Gramm notiert. Diese Mengen können nun im Abrechnungsmenü leichter angepasst werden.*
 
 #### Für Mitglieder bestellbar in
 
@@ -96,6 +102,8 @@ Die Einheit wird an folgenden Stellen in der Foodsoft verwendet:
 
 * Bestellung → Artikelübersicht
 
+*Beispiel: Die Mitglieder sollen einzelne Flaschen Bier bestellen können, obwohl insgesamt ganze Kisten bestellt werden.*
+
 #### Nettopreis
 
 Erlaubt nun zusätzlich die Auswahl einer Einheit, für die der Preis gilt. (Die Auswahl der Einheit dient nur der Artikeladministration – für den Fall, dass in den Preislisten Preise in einer anderen Einheit angegeben werden als *Bestellbar von Lieferantin in*.)
@@ -108,11 +116,13 @@ Hinweis: Das Auswahlfeld für die Einheit (z. B. Kiste) ist hierbei nur verfügb
 
 Intern verwendet Foodsoft 5.0 UNECE-Einheiten, von denen es sehr viele verschiedene gibt. Um die Anzahl der im Artikelformular wählbaren Einheiten gering zu halten, wurde eine Vorauswahl getroffen. Diese Auswahl kann bei Bedarf unter Artikel → Artikeleinheiten verändert werden. (Benötigt die Rolle „Artikeldatenbank“.)
 
-### Umstellung der Artikeldaten von Version 4.9
+Einheiten derselben Dimension (z.B. Gewicht, Volumen) können automatisch ineinander umgerechnet werden, z.B. Gramm in Kilogramm.
+
+### Umstellung der Artikeldaten von Version 4.8
 
 #### Automatische Umstellung
 
-Die Umstellung der Artikeldaten von Foodsoft Version 4.9 auf 5.0 erfolgt teilweise automatisch:
+Die Umstellung der Artikeldaten von Foodsoft Version 4.8 auf 5.0 erfolgt teilweise automatisch:
 
 *Bestellbar von Lieferantin in* wird initial für alle Artikel auf *Benutzerdefiniert* gesetzt, und das alte Freitextfeld *Einheit* wird weiterhin mit demselben Inhalt angezeigt.
 
@@ -128,9 +138,11 @@ Im zweiten Schritt versucht das System, die alten Freitexteinheiten auf die neue
 
 Das Formular zum Erstellen von Gruppenbestellungen erlaubt nun (zusätzlich zu den +/- Buttons) die manuelle Eingabe der Menge. Das ist nötig, da nun – je nach Vorgabe im Artikelformular – freiere Werte möglich sind, die schwerer mit +/- zu erreichen wären. So könnte man beispielsweise 1001 kg von etwas bestellen oder auch 0,5 kg. Die +/- Buttons erhöhen bzw. verringern den Wert um die im Artikelformular eingestellte Granularität.
 
+Außerdem gibt es ein Einheiten-Umrechnungs-Feature, sodass Mitglieder z.B. eingeben können, dass sie 1 kg möchten und sich berechnen lassen können, wie viele Packungen à 175 g sie dafür bestellen müssten.
+
 ### Selbstbedienung
 
-Die Selbstbedienungsfunktion existierte bereits in Foodsoft 4.9. Allerdings empfanden die meisten sie als nicht gut verwendbar – eben *wegen* der fehlenden Möglichkeit der automatischen Umrechnung von Einheiten. Deshalb hier noch einmal eine kurze Erklärung zu ihrem Zweck und ihrer Funktionsweise:
+Die Selbstbedienungsfunktion existierte bereits in Foodsoft 4.8. Allerdings empfanden die meisten sie als nicht gut verwendbar – eben *wegen* der fehlenden Möglichkeit der automatischen Umrechnung von Einheiten. Deshalb hier noch einmal eine kurze Erklärung zu ihrem Zweck und ihrer Funktionsweise:
 
 #### Zweck der Funktion
 
@@ -152,13 +164,16 @@ Die Funktion ist standardmäßig deaktiviert. Um sie zu aktivieren, wähle unter
 
 # 2. Artikelversionen
 
-Intern wurde die Artikelversionierung aktualisiert. Für Benutzerinnen sollte dies nur dadurch erkennbar sein, dass in Foodsoft 4.9 bestehende Fehler nicht mehr auftreten.
+Intern wurde die Artikelversionierung aktualisiert. Bisher wurden nur die Artikelpreise versioniert – nun wird der gesamte Artikel versioniert.
+Für Benutzerinnen sollte dies nur dadurch erkennbar sein, dass bei einer Änderung z.B. des Artikelnamens sich der Name *nicht* mehr bei vergangenen Bestellungen ändert.
 
 Grundsätzlich funktioniert die Artikelversionierung so:
 
 Ist eine Bestellung offen und man bearbeitet einen darin enthaltenen Artikel (egal welches Feld: Name, Preis usw.), dann ändern sich die Daten für die Bestellung ebenfalls.
 
-Ist eine Bestellung jedoch geschlossen, bleiben alle enthaltenen Verweise auf diesen Artikel grundsätzlich unverändert („eingefroren“) und entsprechen dem Stand zum Zeitpunkt des Schließens der Bestellung. Das Bearbeiten des Artikels in der Artikelliste dieser Lieferantin hat keinen Effekt.
+Ist eine Bestellung jedoch geschlossen, bleiben alle enthaltenen Verweise auf diesen Artikel grundsätzlich unverändert („eingefroren“) und entsprechen dem Stand zum Zeitpunkt des Schließens der Bestellung. Das Bearbeiten des Artikels in der Artikelliste dieser Lieferantin wirkt sich nicht mehr darauf aus.
+
+Ebenso können Artikeldaten für eine geschlossene Bestellung im Abrechnungsmenü angepasst werden, ohne dass sich dies auf andere Bestellungen auswirkt.
 
 # 3. Lieferantensynchronisation
 
@@ -169,3 +184,7 @@ Foodsoft 5.0 erhält eine neue Funktion, mit der die Artikelliste eines beliebig
 2. Die dort angezeigte URL kann bei einem beliebigen anderen Lieferanten und in einer beliebigen anderen Foodsoft-5.0-Instanz (oder auch der aktuellen) unter Artikel → Lieferanten/Artikel → Bearbeiten eingetragen werden.
 
 3. Bei diesem Lieferanten kann man anschließend in der Artikelliste auf „Synchronisieren“ klicken. Daraufhin öffnet sich eine Ansicht, in der die geänderten Werte gelb hinterlegt sind und die es erlaubt, vor dem Start der Synchronisation Daten zu bearbeiten.
+
+# 4. Technische Aktualisierung
+
+Die Foodsoft wurde dank eines deutschen Entwicklerteams auf neuere Versionen von Ruby/Rails/Bootstrap aktualisiert. Daher sehen nun einige Buttons und Menüs etwas anders aus. Fehler bitte gerne melden.
