@@ -6,7 +6,7 @@ Foodsoft 5.0 bringt drei grundsätzliche Anpassungen:
 
 2. Verbesserte Artikelversionierung
 
-3. Neue Artikelsynchronisation zwischen beliebigen Lieferanten
+3. Neue Artikelsynchronisation zwischen beliebigen Lieferantinnen
 
 4. Technische Aktualisierung
 
@@ -28,7 +28,7 @@ Im Folgenden werden die Felder des Dialogs zum Bearbeiten von Artikeln (Artikel 
 
 #### Bestellbar von Lieferantin in
 
-In dieser Einheit werden Artikel beim Lieferanten bestellt.
+In dieser Einheit werden Artikel bei der Lieferantin bestellt.
 
 ##### Gebinde
 
@@ -40,7 +40,7 @@ Gebinde werden grundsätzlich auf Basis dieser Einheit berechnet – Beispiel:
 
 * Bei *Für Mitglieder bestellbar in* ist „100 × Gramm“ ausgewählt.
 
-→ Dann können Bestellgruppen in 100-Gramm-Tranchen bestellen, der Artikel wird beim Lieferanten aber nur in vollen Gebindegrößen von 1000 g bestellt. (Beispiele: 1100 g → 1000 g werden bestellt, 2400 g → 2000 g werden bestellt, 2400 g + 600 g Toleranz → 3000 g werden bestellt.)
+→ Dann können Bestellgruppen in 100-Gramm-Tranchen bestellen, der Artikel wird bei der Lieferantin aber nur in vollen Gebindegrößen von 1000 g bestellt. (Beispiele: 1100 g → 1000 g werden bestellt, 2400 g → 2000 g werden bestellt, 2400 g + 600 g Toleranz → 3000 g werden bestellt.)
 
 *Achtung:* Gebinde werden nur dann angewendet, wenn bei *Bestellbar von Lieferantin in* eine Stückeinheit gewählt wurde (z. B. Stück, Packung, Glas usw.) und nicht eine SI-basierte Einheit (z. B. Gramm, Kilogramm, Liter usw.) – Beispiel:
 
@@ -183,7 +183,7 @@ Foodsoft 5.0 erhält eine neue Funktion, mit der die Artikelliste eines beliebig
 
 2. Die dort angezeigte URL kann bei einem beliebigen anderen Lieferanten und in einer beliebigen anderen Foodsoft-5.0-Instanz (oder auch der aktuellen) unter Artikel → Lieferanten/Artikel → Bearbeiten eingetragen werden.
 
-3. Bei diesem Lieferanten kann man anschließend in der Artikelliste auf „Synchronisieren“ klicken. Daraufhin öffnet sich eine Ansicht, in der die geänderten Werte gelb hinterlegt sind und die es erlaubt, vor dem Start der Synchronisation Daten zu bearbeiten.
+3. Bei dieser Lieferantin kann man anschließend in der Artikelliste auf „Synchronisieren“ klicken. Daraufhin öffnet sich eine Ansicht, in der die geänderten Werte gelb hinterlegt sind und die es erlaubt, vor dem Start der Synchronisation Daten zu bearbeiten.
 
 # 4. Technische Aktualisierung
 
