@@ -104,6 +104,8 @@ Die Einheit wird an folgenden Stellen in der Foodsoft verwendet:
 
 *Beispiel: Die Mitglieder sollen einzelne Flaschen Bier bestellen können, obwohl insgesamt ganze Kisten bestellt werden.*
 
+![Beispiel Bierkiste](./sample1.png)
+
 #### Nettopreis
 
 Erlaubt nun zusätzlich die Auswahl einer Einheit, für die der Preis gilt. (Die Auswahl der Einheit dient nur der Artikeladministration – für den Fall, dass in den Preislisten Preise in einer anderen Einheit angegeben werden als *Bestellbar von Lieferantin in*.)
